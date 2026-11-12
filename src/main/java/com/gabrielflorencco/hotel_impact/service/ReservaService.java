@@ -1,0 +1,262 @@
+package com.gabrielflorencco.hotel_impact.service;
+
+import com.gabrielflorencco.hotel_impact.dto.ReservaForm;
+import com.gabrielflorencco.hotel_impact.model.Hospede;
+import com.gabrielflorencco.hotel_impact.model.Quarto;
+import com.gabrielflorencco.hotel_impact.model.Reserva;
+import com.gabrielflorencco.hotel_impact.enums.EstadoQuarto;
+import com.gabrielflorencco.hotel_impact.enums.EstadoReserva;
+import com.gabrielflorencco.hotel_impact.exception.NegocioException;
+import com.gabrielflorencco.hotel_impact.exception.RegistroNaoEncontradoException;
+import com.gabrielflorencco.hotel_impact.repository.HospedeRepository;
+import com.gabrielflorencco.hotel_impact.repository.HospedagemRepository;
+import com.gabrielflorencco.hotel_impact.repository.QuartoRepository;
+import com.gabrielflorencco.hotel_impact.repository.ReservaRepository;
+import com.gabrielflorencco.hotel_impact.service.AuditoriaService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Regras de negócio das reservas: períodos semiabertos [check-in, check-out),
+ * disponibilidade do quarto (estado operacional + reservas ativas conflitantes),
+ * capacidade efetiva, diária histórica com total calculado no servidor,
+ * exceção administrativa para datas passadas e código único gerado pelo sistema.
+ *
+ * Reservas nunca são excluídas fisicamente: preservam o histórico (mesma regra
+ * que bloqueia a exclusão de hóspedes e quartos vinculados); o cancelamento é
+ * a única forma de liberar o período.
+ */
+@Service
+public class ReservaService {
+
+    private static final List<EstadoReserva> ESTADOS_ATIVOS =
+            List.of(EstadoReserva.PENDENTE, EstadoReserva.CONFIRMADA);
+
+    private static final Set<EstadoQuarto> ESTADOS_FORA_DE_OPERACAO =
+            Set.of(EstadoQuarto.INTERDITADO, EstadoQuarto.MANUTENCAO);
+
+    private final ReservaRepository reservas;
+    private final HospedeRepository hospedes;
+    private final QuartoRepository quartos;
+    private final HospedagemRepository hospedagens;
+    private final AuditoriaService auditoria;
+
+    public ReservaService(ReservaRepository reservas, HospedeRepository hospedes,
+                          QuartoRepository quartos, HospedagemRepository hospedagens,
+                          AuditoriaService auditoria) {
+        this.reservas = reservas;
+        this.hospedes = hospedes;
+        this.quartos = quartos;
+        this.hospedagens = hospedagens;
+        this.auditoria = auditoria;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Reserva> buscar(EstadoReserva estado, Pageable pageable) {
+        return estado == null
+                ? reservas.buscarTodos(pageable)
+                : reservas.buscarPorEstado(estado, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Reserva buscarPorId(Long id) {
+        return reservas.findByIdComDetalhes(id)
+                .orElseThrow(() -> new RegistroNaoEncontradoException("Reserva não encontrada."));
+    }
+
+    @Transactional
+    public Reserva criar(ReservaForm form) {
+        validarPeriodo(form.getDataCheckIn(), form.getDataCheckOut());
+
+        Hospede hospede = hospedes.findById(form.getHospedeId())
+                .orElseThrow(() -> new RegistroNaoEncontradoException("Hóspede não encontrado."));
+        Quarto quarto = quartos.findByIdComCategoria(form.getQuartoId())
+                .orElseThrow(() -> new RegistroNaoEncontradoException("Quarto não encontrado."));
+
+        exigirQuartoReservavel(quarto);
+        validarCapacidade(quarto, form.getQuantidadeHospedes());
+        exigirPeriodoLivre(quarto, form.getDataCheckIn(), form.getDataCheckOut());
+        validarExcecaoDeDataPassada(form);
+
+        Reserva reserva = new Reserva();
+        reserva.setCodigo(gerarCodigo());
+        reserva.setHospede(hospede);
+        reserva.setQuarto(quarto);
+        reserva.setDataCheckIn(form.getDataCheckIn());
+        reserva.setDataCheckOut(form.getDataCheckOut());
+        reserva.setQuantidadeHospedes(form.getQuantidadeHospedes());
+        reserva.setValorDiaria(form.getValorDiaria());
+
+        BigDecimal desconto = form.getDesconto() == null ? BigDecimal.ZERO : form.getDesconto();
+        validarDesconto(reserva, desconto);
+        reserva.setDesconto(desconto);
+        reserva.setValorTotal(reserva.getValorBruto().subtract(desconto));
+
+        reserva.setMotivoExcecao(nuloSeVazio(form.getMotivoExcecao()));
+        reserva.setObservacoes(nuloSeVazio(form.getObservacoes()));
+        Reserva salva = reservas.save(reserva);
+        auditoria.registrar(com.gabrielflorencco.hotel_impact.enums.OperacaoAuditoria.RESERVA_CRIADA,
+                "Reserva", salva.getId(), "Código " + salva.getCodigo());
+        return salva;
+    }
+
+    @Transactional
+    public Reserva atualizar(Long id, ReservaForm form) {
+        Reserva reserva = buscarPorId(id);
+        if (!reserva.isAtiva()) {
+            throw new NegocioException(
+                    "Somente reservas pendentes ou confirmadas podem ser editadas.");
+        }
+        if (hospedagens.existsByReservaId(id)) {
+            throw new NegocioException(
+                    "Não é possível editar a reserva: o check-in já foi realizado.");
+        }
+
+        Hospede hospede = hospedes.findById(form.getHospedeId())
+                .orElseThrow(() -> new RegistroNaoEncontradoException("Hóspede não encontrado."));
+        Quarto quarto = quartos.findByIdComCategoria(form.getQuartoId())
+                .orElseThrow(() -> new RegistroNaoEncontradoException("Quarto não encontrado."));
+
+        exigirQuartoReservavel(quarto);
+        validarCapacidade(quarto, form.getQuantidadeHospedes());
+        if (!reservas.findConflitantesExceto(quarto.getId(), id,
+                form.getDataCheckIn(), form.getDataCheckOut(), ESTADOS_ATIVOS).isEmpty()) {
+            throw new NegocioException("Já existe uma reserva ativa para o quarto " + quarto.getNumero()
+                    + " no período informado.");
+        }
+        validarExcecaoDeDataPassada(form);
+
+        reserva.reprogramar(hospede, quarto,
+                form.getDataCheckIn(), form.getDataCheckOut(),
+                form.getQuantidadeHospedes(), form.getValorDiaria(),
+                form.getDesconto(), form.getMotivoExcecao(), form.getObservacoes());
+        Reserva salva = reservas.save(reserva);
+        auditoria.registrar(com.gabrielflorencco.hotel_impact.enums.OperacaoAuditoria.RESERVA_EDITADA,
+                "Reserva", salva.getId(), "Código " + salva.getCodigo());
+        return salva;
+    }
+
+    @Transactional(readOnly = true)
+    public boolean podeEditar(Reserva reserva) {
+        return reserva.isAtiva() && !hospedagens.existsByReservaId(reserva.getId());
+    }
+
+    @Transactional
+    public void confirmar(Long id) {
+        Reserva reserva = buscarPorId(id);
+        reserva.confirmar();
+        reservas.save(reserva);
+    }
+
+    @Transactional
+    public void cancelar(Long id) {
+        Reserva reserva = buscarPorId(id);
+        if (!reserva.isAtiva()) {
+            throw new NegocioException("Somente reservas pendentes ou confirmadas podem ser canceladas.");
+        }
+        if (hospedagens.existsByReservaId(id)) {
+            throw new NegocioException("Não é possível cancelar a reserva: o check-in já foi realizado.");
+        }
+        reserva.cancelar();
+        reservas.save(reserva);
+        auditoria.registrar(com.gabrielflorencco.hotel_impact.enums.OperacaoAuditoria.RESERVA_CANCELADA,
+                "Reserva", id, "Código " + reserva.getCodigo());
+    }
+
+    @Transactional
+    public void registrarNoShow(Long id) {
+        Reserva reserva = buscarPorId(id);
+        if (!podeRegistrarNoShow(reserva)) {
+            if (hospedagens.existsByReservaId(id)) {
+                throw new NegocioException("Não é possível registrar no-show: a reserva possui check-in.");
+            }
+            if (reserva.isAtiva()) {
+                throw new NegocioException(
+                        "No-show só pode ser registrado após a data prevista de check-in (" + reserva.getDataCheckIn() + ").");
+            }
+            throw new NegocioException("Somente reservas pendentes ou confirmadas podem ser registradas como no-show.");
+        }
+        reserva.registrarNoShow();
+        reservas.save(reserva);
+        auditoria.registrar(com.gabrielflorencco.hotel_impact.enums.OperacaoAuditoria.RESERVA_NO_SHOW,
+                "Reserva", id, "Código " + reserva.getCodigo());
+    }
+
+    @Transactional(readOnly = true)
+    public boolean podeRegistrarNoShow(Reserva reserva) {
+        return reserva.isAtiva()
+                && LocalDate.now().isAfter(reserva.getDataCheckIn())
+                && !hospedagens.existsByReservaId(reserva.getId());
+    }
+
+    private void validarPeriodo(LocalDate checkIn, LocalDate checkOut) {
+        if (!checkOut.isAfter(checkIn)) {
+            throw new NegocioException("A data de check-out deve ser posterior à data de check-in.");
+        }
+    }
+
+    private void exigirQuartoReservavel(Quarto quarto) {
+        if (!Boolean.TRUE.equals(quarto.getAtivo())) {
+            throw new NegocioException(
+                    "O quarto " + quarto.getNumero() + " está desativado. Reative-o para utilizá-lo em reservas.");
+        }
+        if (ESTADOS_FORA_DE_OPERACAO.contains(quarto.getEstado())) {
+            throw new NegocioException(
+                    "O quarto " + quarto.getNumero() + " está fora de operação (" + quarto.getEstado()
+                            + ") e não pode receber reservas.");
+        }
+    }
+
+    private void validarCapacidade(Quarto quarto, Integer quantidadeHospedes) {
+        int capacidadeEfetiva = quarto.getCapacidadeEfetiva();
+        if (quantidadeHospedes > capacidadeEfetiva) {
+            throw new NegocioException("Capacidade excedida: o quarto " + quarto.getNumero()
+                    + " comporta " + capacidadeEfetiva + " hóspede(s) e foram informados "
+                    + quantidadeHospedes + ".");
+        }
+    }
+
+    private void exigirPeriodoLivre(Quarto quarto, LocalDate checkIn, LocalDate checkOut) {
+        if (!reservas.findConflitantes(quarto.getId(), checkIn, checkOut, ESTADOS_ATIVOS).isEmpty()) {
+            throw new NegocioException("Já existe uma reserva ativa para o quarto " + quarto.getNumero()
+                    + " no período informado.");
+        }
+    }
+
+    private void validarExcecaoDeDataPassada(ReservaForm form) {
+        if (form.getDataCheckIn().isBefore(LocalDate.now())
+                && (form.getMotivoExcecao() == null || form.getMotivoExcecao().isBlank())) {
+            throw new NegocioException(
+                    "Reservas para datas passadas exigem uma justificativa de exceção.");
+        }
+    }
+
+    private void validarDesconto(Reserva reserva, BigDecimal desconto) {
+        if (desconto.compareTo(reserva.getValorBruto()) > 0) {
+            throw new NegocioException("O desconto não pode exceder o valor bruto da reserva (R$ "
+                    + reserva.getValorBruto().toPlainString() + ").");
+        }
+    }
+
+    private String gerarCodigo() {
+        String prefixo = "RES-" + LocalDate.now().getYear() + "-";
+        long sequencia = reservas.countByCodigoStartingWith(prefixo);
+        for (long candidato = sequencia + 1; ; candidato++) {
+            String codigo = prefixo + "%06d".formatted(candidato);
+            if (!reservas.existsByCodigo(codigo)) {
+                return codigo;
+            }
+        }
+    }
+
+    private String nuloSeVazio(String valor) {
+        return valor == null || valor.isBlank() ? null : valor.trim();
+    }
+}
