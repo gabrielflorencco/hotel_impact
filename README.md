@@ -66,11 +66,3 @@ Acessos:
 - `http://localhost:8080/painel` — área administrativa (após login)
 
 Credenciais padrão: `RECEPCIONISTA_USER_PLACEHOLDER` / `RECEPCIONISTA_PASSWORD_PLACEHOLDER`.
-
-## Observações
-
-- Stack minimalista por exigência acadêmica: sem JPA/Hibernate, Flyway/Liquibase, Lombok, MapStruct, Docker.
-- Persistência via Spring Data JDBC com SQL explícito (JdbcTemplate).
-- Segurança: Spring Security com form login, usuário único via variáveis de ambiente, CSRF habilitado.
-- Navegação SPA parcial via htmx na área autenticada.
-- Schema idempotente (`CREATE TABLE IF NOT EXISTS`), sem dados de demonstração automáticos.
