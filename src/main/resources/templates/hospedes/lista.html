@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head th:replace="~{layout/fragments :: head(${titulo})}"></head>
+<body data-area="admin">
+<a th:replace="~{layout/fragments :: pular-para-conteudo}"></a>
+<div class="app-wrapper">
+
+    <aside th:replace="~{layout/fragments :: sidebar('hospedes')}"></aside>
+
+    <div class="app-main">
+        <header th:replace="~{layout/fragments :: topbar}"></header>
+
+        <main class="app-content" id="app-conteudo" tabindex="-1">
+            <th:block th:fragment="conteudo">
+            <div th:replace="~{layout/fragments :: mensagens}"></div>
+
+            <div class="page-header">
+    <div>
+        <div class="page-context">Cadastros</div>
+        <h1 th:text="${titulo}">Hóspedes</h1>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-primary" th:href="@{/hospedes/novo}">
+                    <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Novo hóspede
+                </a>
+    </div>
+</div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body py-3">
+                    <form method="get" th:action="@{/hospedes}" class="filtro-barra d-flex flex-wrap align-items-end gap-2">
+                        <div class="flex-grow-1" style="min-width: 260px">
+                            <label for="termo" class="form-label small text-secondary mb-1">
+                                Buscar por nome, CPF, telefone ou e-mail
+                            </label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
+                                <input type="text" class="form-control" id="termo" name="termo"
+                                       th:value="${termo}" placeholder="Ex.: Ana, 529.982, 98888-0001, ana@exemplo.com">
+                            </div>
+                        </div>
+                        <div class="filtro-acao">
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Buscar</button>
+                            <a class="btn-filtro-limpar" th:href="@{/hospedes}">Limpar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <div th:if="${#lists.isEmpty(pagina.content)}" class="py-2">
+                        <div th:replace="~{layout/fragments :: estado-vazio('bi-people', 'Nenhum hóspede encontrado.')}"></div>
+                        <div class="text-center pb-4">
+                            <a class="btn btn-primary" th:href="@{/hospedes/novo}">Cadastrar o primeiro</a>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive" th:unless="${#lists.isEmpty(pagina.content)}">
+                        <table class="tabela-operacional table table-hover mb-0">
+                            <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>CPF</th>
+                                <th>Telefone</th>
+                                <th>E-mail</th>
+                                <th>Cadastro</th>
+                                <th style="width: 1%">Ações</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="hospede : ${pagina.content}">
+                                <td>
+                                    <a class="fw-semibold link-entidade"
+                                       th:href="@{'/hospedes/' + ${hospede.id}}"
+                                       th:text="${hospede.nome}">Ana Souza</a>
+                                </td>
+                                <td class="text-secondary" th:text="${hospede.cpfMascarado} ?: '—'">•••.•••.•••-025</td>
+                                <td th:text="${hospede.telefone} ?: '—'">(11) 98888-0001</td>
+                                <td th:text="${hospede.email} ?: '—'">ana@exemplo.com</td>
+                                <td class="text-secondary"
+                                    th:text="${hospede.dataCadastro != null} ? ${#temporals.format(hospede.dataCadastro, 'dd/MM/yyyy')} : '—'">
+                                    19/10/2026
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1 justify-content-end">
+                                        <a class="btn btn-sm btn-outline-secondary" title="Detalhes"
+                                           th:href="@{'/hospedes/' + ${hospede.id}}">
+                                             <i class="bi bi-eye" aria-hidden="true"></i>
+                                         </a>
+                                        <a class="btn btn-sm btn-outline-secondary" title="Editar"
+                                           th:href="@{'/hospedes/' + ${hospede.id} + '/editar'}">
+                                             <i class="bi bi-pencil" aria-hidden="true"></i>
+                                         </a>
+                                        <form th:action="@{'/hospedes/' + ${hospede.id} + '/excluir'}" method="post"
+                                              th:attr="data-confirmar='Excluir o hóspede ' + ${hospede.nome} + '? Esta ação não pode ser desfeita.'">
+                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir">
+                                                 <i class="bi bi-trash" aria-hidden="true"></i>
+                                             </button>
+                                         </form>
+                                     </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="p-3 border-top d-flex justify-content-between align-items-center flex-wrap gap-2"
+                         th:if="${!#lists.isEmpty(pagina.content)}">
+                        <span class="small text-secondary">
+                            <span th:text="${pagina.numberOfElements}">15</span> registro(s) nesta página ·
+                            total de <span th:text="${pagina.totalElements}">0</span>
+                        </span>
+                        <span th:replace="~{layout/fragments :: paginacao(${pagina}, @{/hospedes}, ${queryString})}"></span>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+        </main>
+    </div>
+
+</div>
+<div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>

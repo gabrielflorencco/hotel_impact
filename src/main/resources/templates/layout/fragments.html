@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${titulo} + ' · HotelImpact'">HotelImpact</title>
+    <script>
+        // Aplica o tema antes da primeira pintura para evitar "flash".
+        (function () {
+            var temaSalvo = localStorage.getItem('hi-tema');
+            var prefereEscuro = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.setAttribute('data-bs-theme', temaSalvo || (prefereEscuro ? 'dark' : 'light'));
+        })();
+    </script>
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap-icons/bootstrap-icons.min.css}">
+    <link rel="stylesheet" th:href="@{/css/inter.css}">
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+    <link rel="icon" type="image/x-icon" th:href="@{/images/icons/favicon.ico}">
+</head>
+<body>
+
+<!-- Atalho de teclado para o conteúdo principal (acessibilidade) -->
+<a th:fragment="pular-para-conteudo" class="visually-hidden-focusable position-absolute top-0 start-0 m-2 btn btn-sm btn-primary"
+   href="#app-conteudo">Pular para o conteúdo</a>
+
+<!-- Barra superior -->
+<header th:fragment="topbar" class="topbar d-flex align-items-center justify-content-between px-3 px-md-4">
+    <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-outline-secondary btn-sm d-lg-none" type="button"
+                data-bs-toggle="offcanvas" data-bs-target="#menuLateral" aria-controls="menuLateral" aria-label="Abrir menu">
+            <i class="bi bi-list" aria-hidden="true"></i>
+        </button>
+        <button type="button" id="botaoRecolherSidebar" class="btn btn-outline-secondary btn-sm d-none d-lg-inline-flex"
+                aria-label="Recolher menu lateral" title="Recolher menu lateral">
+            <i class="bi bi-layout-sidebar" aria-hidden="true"></i>
+        </button>
+        <span class="topbar-data" th:text="${hoje} ?: ''">hoje</span>
+        <span id="indicador-nav" class="indicador-nav" role="status" aria-label="Carregando">
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+        </span>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+        <button type="button" id="botaoTema" class="btn btn-outline-secondary btn-sm" aria-label="Alternar entre modo claro e escuro">
+            <i class="bi bi-moon-stars-fill" aria-hidden="true"></i>
+        </button>
+        <div class="d-flex align-items-center gap-2 text-secondary">
+            <i class="bi bi-person-circle fs-5" aria-hidden="true"></i>
+            <span class="d-none d-sm-inline small">Recepção</span>
+        </div>
+    </div>
+</header>
+
+<!-- Menu lateral: grupos expansíveis pela rotina do hotel; recolhível no desktop -->
+<aside th:fragment="sidebar(ativo)" id="menuLateral" class="sidebar offcanvas-lg offcanvas-start" tabindex="-1" aria-label="Menu principal">
+    <div class="offcanvas-header d-lg-none">
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar menu"></button>
+    </div>
+    <div class="sidebar-brand">
+        <img th:src="@{/images/hotelimpact-logo-simbolo.png}" alt="" class="sidebar-simbolo" width="153" height="160">
+        <span class="sidebar-brand-nome">HotelImpact</span>
+    </div>
+    <nav class="sidebar-nav" aria-label="Módulos do sistema">
+        <button type="button" class="sidebar-grupo sidebar-grupo-btn" data-grupo="operacao"
+                aria-expanded="true" aria-controls="grupo-operacao">
+            <span class="sidebar-grupo-nome">Operação</span>
+            <i class="bi bi-chevron-down sidebar-grupo-seta" aria-hidden="true"></i>
+        </button>
+        <div id="grupo-operacao" class="sidebar-grupo-itens">
+            <a th:href="@{/painel}" title="Dashboard" th:classappend="${ativo} == 'dashboard' ? 'active' : ''"
+               th:attr="aria-current=${ativo} == 'dashboard' ? 'page' : null">
+                <i class="bi bi-speedometer2" aria-hidden="true"></i><span>Dashboard</span>
+            </a>
+            <a th:href="@{/reservas}" title="Reservas" th:classappend="${ativo} == 'reservas' ? 'active' : ''"
+               th:attr="aria-current=${ativo} == 'reservas' ? 'page' : null">
+                <i class="bi bi-calendar-check" aria-hidden="true"></i><span>Reservas</span>
+            </a>
+            <a th:href="@{/hospedagens}" title="Hospedagens" th:classappend="${ativo} == 'hospedagens' ? 'active' : ''"
+               th:attr="aria-current=${ativo} == 'hospedagens' ? 'page' : null">
+                <i class="bi bi-key" aria-hidden="true"></i><span>Hospedagens</span>
+            </a>
+        </div>
+
+        <button type="button" class="sidebar-grupo sidebar-grupo-btn" data-grupo="quartos"
+                aria-expanded="true" aria-controls="grupo-quartos">
+            <span class="sidebar-grupo-nome">Quartos & insumos</span>
+            <i class="bi bi-chevron-down sidebar-grupo-seta" aria-hidden="true"></i>
+        </button>
+        <div id="grupo-quartos" class="sidebar-grupo-itens">
+            <a th:href="@{/quartos}" title="Quartos" th:classappend="${ativo} == 'quartos' ? 'active' : ''"
+               th:attr="aria-current=${ativo} == 'quartos' ? 'page' : null">
+                <i class="bi bi-door-open" aria-hidden="true"></i><span>Quartos</span>
+            </a>
+            <a th:href="@{/manutencoes}" title="Manutenção" th:classappend="${ativo} == 'manutencao' ? 'active' : ''"
+               th:attr="aria-current=${ativo} == 'manutencao' ? 'page' : null">
+                <i class="bi bi-tools" aria-hidden="true"></i><span>Manutenção</span>
+            </a>
+            <a th:href="@{/itens}" title="Consumos" th:classappend="${ativo} == 'consumos' ? 'active' : ''"
+               th:attr="aria-current=${ativo} == 'consumos' ? 'page' : null">
+                <i class="bi bi-cup-straw" aria-hidden="true"></i><span>Consumos</span>
+            </a>
+        </div>
+
+        <button type="button" class="sidebar-grupo sidebar-grupo-btn" data-grupo="cadastros"
+                aria-expanded="true" aria-controls="grupo-cadastros">
+            <span class="sidebar-grupo-nome">Cadastros</span>
+            <i class="bi bi-chevron-down sidebar-grupo-seta" aria-hidden="true"></i>
+        </button>
+        <div id="grupo-cadastros" class="sidebar-grupo-itens">
+            <a th:href="@{/hospedes}" title="Hóspedes" th:classappend="${ativo} == 'hospedes' ? 'active' : ''"
+               th:attr="aria-current=${ativo} == 'hospedes' ? 'page' : null">
+                <i class="bi bi-people" aria-hidden="true"></i><span>Hóspedes</span>
+            </a>
+            <a th:href="@{/categorias}" title="Categorias" th:classappend="${ativo} == 'categorias' ? 'active' : ''"
+               th:attr="aria-current=${ativo} == 'categorias' ? 'page' : null">
+                <i class="bi bi-tags" aria-hidden="true"></i><span>Categorias</span>
+            </a>
+        </div>
+
+        <button type="button" class="sidebar-grupo sidebar-grupo-btn" data-grupo="gestao"
+                aria-expanded="true" aria-controls="grupo-gestao">
+            <span class="sidebar-grupo-nome">Gestão</span>
+            <i class="bi bi-chevron-down sidebar-grupo-seta" aria-hidden="true"></i>
+        </button>
+        <div id="grupo-gestao" class="sidebar-grupo-itens">
+            <a th:href="@{/relatorios}" title="Relatórios" th:classappend="${ativo} == 'relatorios' ? 'active' : ''"
+               th:attr="aria-current=${ativo} == 'relatorios' ? 'page' : null">
+                <i class="bi bi-clipboard-data" aria-hidden="true"></i><span>Relatórios</span>
+            </a>
+        </div>
+    </nav>
+    <footer class="sidebar-footer">
+        <div class="sidebar-perfil">
+            <i class="bi bi-person-circle" aria-hidden="true"></i>
+            <div>
+                <span class="perfil-nome sidebar-brand-nome">Recepção</span>
+                <span class="perfil-papel">Sessão autenticada</span>
+            </div>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-outline-secondary btn-sm" title="Encerrar sessão" aria-label="Encerrar sessão">
+                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+                </button>
+            </form>
+        </div>
+    </footer>
+</aside>
+
+<!-- Cabeçalho de página padrão: breadcrumb do módulo + ícone-quadro + título -->
+<div th:fragment="page-header(contexto, titulo)" class="page-header"
+     th:with="icone=${contexto == 'Operação' ? 'bi-speedometer2' :
+                   (contexto == 'Quartos & insumos' ? 'bi-door-open' :
+                   (contexto == 'Cadastros' ? 'bi-people' : 'bi-clipboard-data'))}">
+    <div>
+        <nav class="page-breadcrumb" aria-label="Localização atual">
+            <span th:text="${contexto}">Módulo</span>
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            <span class="page-breadcrumb-atual" th:text="${titulo}">Página</span>
+        </nav>
+        <div class="d-flex align-items-center gap-3">
+            <span class="page-icone" aria-hidden="true"><i class="bi fs-5" th:classappend="${icone}"></i></span>
+            <h1 th:text="${titulo}">Título da página</h1>
+        </div>
+    </div>
+</div>
+
+<!-- Mensagens de feedback: sucesso via redirect (query), erro via modelo ou query -->
+<div th:fragment="mensagens" role="status" aria-live="polite">
+    <div class="hi-alerta alert alert-success" th:if="${param.sucesso}">
+        <i class="bi bi-check-circle" aria-hidden="true"></i><span th:text="${param.sucesso[0]}">Operação realizada.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar aviso"></button>
+    </div>
+    <div class="hi-alerta alert alert-danger" th:if="${erro}">
+        <i class="bi bi-exclamation-triangle" aria-hidden="true"></i><span th:text="${erro}">Ocorreu um erro.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar aviso"></button>
+    </div>
+    <div class="hi-alerta alert alert-danger" th:if="${param.erro}">
+        <i class="bi bi-exclamation-triangle" aria-hidden="true"></i><span th:text="${param.erro[0]}">Ocorreu um erro.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar aviso"></button>
+    </div>
+    <div class="hi-alerta alert alert-danger" th:if="${erroPagamento}">
+        <i class="bi bi-exclamation-triangle" aria-hidden="true"></i><span th:text="${erroPagamento}">Ocorreu um erro.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar aviso"></button>
+    </div>
+</div>
+
+<!-- Estado vazio reutilizável: ícone + mensagem -->
+<div th:fragment="estado-vazio(icone, mensagem)">
+    <div class="empty-state">
+        <i class="bi fs-1" th:class="${icone}" aria-hidden="true"></i>
+        <p class="mb-0" th:text="${mensagem}">Nenhum registro encontrado.</p>
+    </div>
+</div>
+
+<!-- Valor monetário em BRL (pt-BR) -->
+<span th:fragment="dinheiro(valor)" class="numerico text-nowrap"
+      th:text="'R$ ' + ${#numbers.formatDecimal(valor, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span>
+
+<!-- Badges de status: ponto + rótulo legível. A cor nunca é o único sinal. -->
+<span th:fragment="badge-estado-quarto(estado)"
+      th:with="par=${estado.name() == 'DISPONIVEL' ? 'badge-estado-ok|Disponível' :
+                    (estado.name() == 'OCUPADO' ? 'badge-estado-ocupado|Ocupado' :
+                    (estado.name() == 'LIMPEZA' ? 'badge-estado-info|Em limpeza' :
+                    (estado.name() == 'MANUTENCAO' ? 'badge-estado-atencao|Em manutenção' : 'badge-estado-erro|Interditado')))}"
+      class="badge-status" th:classappend="${#strings.arraySplit(par, '|')[0]}"
+      th:text="${#strings.arraySplit(par, '|')[1]}">Disponível</span>
+
+<span th:fragment="badge-estado-reserva(estado)"
+      th:with="par=${estado.name() == 'PENDENTE' ? 'badge-estado-atencao|Pendente' :
+                    (estado.name() == 'CONFIRMADA' ? 'badge-estado-ok|Confirmada' :
+                    (estado.name() == 'CANCELADA' ? 'badge-estado-neutro|Cancelada' :
+                    (estado.name() == 'CONCLUIDA' ? 'badge-estado-info|Concluída' : 'badge-estado-erro|Não compareceu')))}"
+      class="badge-status" th:classappend="${#strings.arraySplit(par, '|')[0]}"
+      th:text="${#strings.arraySplit(par, '|')[1]}">Pendente</span>
+
+<span th:fragment="badge-estado-hospedagem(estado)"
+      th:with="par=${estado.name() == 'EM_ANDAMENTO' ? 'badge-estado-ocupado|Em andamento' :
+                    (estado.name() == 'ENCERRADA' ? 'badge-estado-info|Encerrada' : 'badge-estado-neutro|Cancelada')}"
+      class="badge-status" th:classappend="${#strings.arraySplit(par, '|')[0]}"
+      th:text="${#strings.arraySplit(par, '|')[1]}">Em andamento</span>
+
+<span th:fragment="badge-estado-manutencao(estado)"
+      th:with="par=${estado.name() == 'ABERTA' ? 'badge-estado-atencao|Aberta' :
+                    (estado.name() == 'EM_ANDAMENTO' ? 'badge-estado-ocupado|Em andamento' :
+                    (estado.name() == 'CONCLUIDA' ? 'badge-estado-ok|Concluída' : 'badge-estado-neutro|Cancelada'))}"
+      class="badge-status" th:classappend="${#strings.arraySplit(par, '|')[0]}"
+      th:text="${#strings.arraySplit(par, '|')[1]}">Aberta</span>
+
+<span th:fragment="badge-prioridade-manutencao(prioridade)"
+      th:with="par=${prioridade.name() == 'CRITICA' ? 'badge-estado-erro|Crítica' :
+                    (prioridade.name() == 'ALTA' ? 'badge-estado-atencao|Alta' :
+                    (prioridade.name() == 'MEDIA' ? 'badge-estado-info|Média' : 'badge-estado-neutro|Baixa'))}"
+      class="badge-status" th:classappend="${#strings.arraySplit(par, '|')[0]}"
+      th:text="${#strings.arraySplit(par, '|')[1]}">Média</span>
+
+<span th:fragment="badge-estado-pagamento(estado)"
+      class="badge-status" th:classappend="${estado.name() == 'CONFIRMADO'} ? 'badge-estado-ok' : 'badge-estado-neutro'"
+      th:text="${estado.name() == 'CONFIRMADO'} ? 'Confirmado' : 'Estornado'">Confirmado</span>
+
+<span th:fragment="badge-estado-consumo(estado)"
+      class="badge-status" th:classappend="${estado.name() == 'ATIVO'} ? 'badge-estado-ok' : 'badge-estado-neutro'"
+      th:text="${estado.name() == 'ATIVO'} ? 'Ativo' : 'Cancelado'">Ativo</span>
+
+<span th:fragment="badge-ativo(ativo)"
+      class="badge-status" th:classappend="${ativo} ? 'badge-estado-ok' : 'badge-estado-neutro'"
+      th:text="${ativo} ? 'Ativo' : 'Inativo'">Ativo</span>
+
+<!-- Paginação em janela (±2 da página atual, com elipses); suporta qualquer
+     volume de páginas sem virar uma lista interminável de links. -->
+<nav th:fragment="paginacao(pagina, urlBase, queryString)" th:if="${pagina != null and pagina.totalPages > 1}"
+     aria-label="Paginação de resultados"
+     th:with="atual=${pagina.number}, ultimo=${pagina.totalPages - 1},
+              inicio=${atual - 2 < 1 ? 1 : atual - 2},
+              fim=${atual + 2 > ultimo - 1 ? ultimo - 1 : atual + 2}">
+    <ul class="pagination pagination-sm justify-content-center mb-0">
+        <li class="page-item" th:classappend="${pagina.first} ? 'disabled'">
+            <a class="page-link" th:href="${urlBase} + '?page=' + (${atual} - 1) + ${queryString}"
+               th:if="${!pagina.first}" aria-label="Página anterior">Anterior</a>
+            <span class="page-link" th:if="${pagina.first}">Anterior</span>
+        </li>
+        <!-- Primeira página sempre visível (a janela começa a partir do índice 1) -->
+        <li class="page-item" th:classappend="${atual == 0} ? 'active'"
+            th:attr="aria-current=${atual == 0} ? 'page' : null">
+            <a class="page-link" th:href="${urlBase} + '?page=0' + ${queryString}">1</a>
+        </li>
+        <li class="page-item disabled" th:if="${inicio > 1}">
+            <span class="page-link">…</span>
+        </li>
+        <li class="page-item" th:each="i : ${#numbers.sequence(inicio, fim)}"
+            th:classappend="${i == atual} ? 'active'"
+            th:attr="aria-current=${i == atual} ? 'page' : null">
+            <a class="page-link" th:href="${urlBase} + '?page=' + ${i} + ${queryString}" th:text="${i + 1}">2</a>
+        </li>
+        <li class="page-item disabled" th:if="${fim < ultimo - 2}">
+            <span class="page-link">…</span>
+        </li>
+        <!-- Última página sempre visível quando a janela não a alcança -->
+        <li class="page-item" th:if="${fim < ultimo}" th:classappend="${atual == ultimo} ? 'active'"
+            th:attr="aria-current=${atual == ultimo} ? 'page' : null">
+            <a class="page-link" th:href="${urlBase} + '?page=' + ${ultimo} + ${queryString}" th:text="${ultimo + 1}">Ú</a>
+        </li>
+        <li class="page-item" th:classappend="${pagina.last} ? 'disabled'">
+            <a class="page-link" th:href="${urlBase} + '?page=' + (${atual} + 1) + ${queryString}"
+               th:if="${!pagina.last}" aria-label="Próxima página">Próxima</a>
+            <span class="page-link" th:if="${pagina.last}">Próxima</span>
+        </li>
+    </ul>
+</nav>
+
+<!-- Scripts -->
+<div th:fragment="scripts">
+    <script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/htmx/htmx.min.js}"></script>
+    <script th:src="@{/js/app.js}"></script>
+</div>
+
+</body>
+</html>

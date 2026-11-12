@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head th:replace="~{layout/fragments :: head(${titulo})}"></head>
+<body data-area="admin">
+<a th:replace="~{layout/fragments :: pular-para-conteudo}"></a>
+<div class="app-wrapper">
+
+    <aside th:replace="~{layout/fragments :: sidebar('consumos')}"></aside>
+
+    <div class="app-main">
+        <header th:replace="~{layout/fragments :: topbar}"></header>
+
+        <main class="app-content" id="app-conteudo" tabindex="-1">
+            <th:block th:fragment="conteudo">
+            <div th:replace="~{layout/fragments :: mensagens}"></div>
+
+            <div class="page-header">
+    <div>
+        <div class="page-context">Quartos & insumos</div>
+        <h1 th:text="${titulo}">Catálogo de itens</h1>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-primary" th:href="@{/itens/novo}">
+                    <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Novo item
+                </a>
+    </div>
+</div>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <div th:if="${#lists.isEmpty(itens)}" class="py-2">
+                        <div th:replace="~{layout/fragments :: estado-vazio('bi-cup-straw', 'Nenhum item no catálogo.')}"></div>
+                        <div class="text-center pb-4">
+                            <a class="btn btn-primary" th:href="@{/itens/novo}">Cadastrar o primeiro</a>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive" th:unless="${#lists.isEmpty(itens)}">
+                        <table class="tabela-operacional table table-hover mb-0">
+                            <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Tipo</th>
+                                <th class="col-num">Preço unit.</th>
+                                <th class="col-centro">Estoque</th>
+                                <th class="col-centro">Situação</th>
+                                <th style="width: 1%">Ações</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="item : ${itens}" th:classappend="${!item.ativo} ? 'opacity-75'">
+                                <td>
+                                    <span class="fw-semibold" th:text="${item.nome}">Água mineral 500ml</span>
+                                    <span class="badge badge-estado-erro ms-1"
+                                          th:if="${item.estoqueBaixo}">estoque baixo</span>
+                                    <span class="d-block text-secondary small" th:text="${item.descricao}">Garrafa</span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-estado-neutro" th:text="${item.tipo}">PRODUTO</span>
+                                </td>
+                                <td class="col-num"><span th:replace="~{layout/fragments :: dinheiro(${item.precoUnitario})}">R$ 5,00</span></td>
+                                <td class="col-centro">
+                                    <span th:if="${item.estoqueControladoEfetivo}"
+                                          th:text="${item.estoqueAtual} + ' (mín. ' + ${item.estoqueMinimo} + ')'">100 (mín. 20)</span>
+                                    <span th:unless="${item.estoqueControladoEfetivo}" class="text-secondary">—</span>
+                                </td>
+                                <td class="col-centro" th:text="${item.ativo} ? 'Ativo' : 'Inativo'">Ativo</td>
+                                <td>
+                                    <div class="d-flex gap-1 justify-content-end">
+                                        <a class="btn btn-sm btn-outline-secondary" title="Editar"
+                                           th:href="@{'/itens/' + ${item.id} + '/editar'}">
+                                             <i class="bi bi-pencil" aria-hidden="true"></i>
+                                         </a>
+                                        <form th:action="@{'/itens/' + ${item.id} + '/excluir'}" method="post"
+                                              th:attr="data-confirmar='Excluir o item ' + ${item.nome} + '? Esta ação não pode ser desfeita.'">
+                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir">
+                                                 <i class="bi bi-trash" aria-hidden="true"></i>
+                                             </button>
+                                         </form>
+                                     </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+        </main>
+    </div>
+
+</div>
+<div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>

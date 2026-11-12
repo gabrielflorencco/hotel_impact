@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head th:replace="~{layout/fragments :: head(${titulo})}"></head>
+<body data-area="admin">
+<a th:replace="~{layout/fragments :: pular-para-conteudo}"></a>
+<div class="app-wrapper">
+
+    <aside th:replace="~{layout/fragments :: sidebar('quartos')}"></aside>
+
+    <div class="app-main">
+        <header th:replace="~{layout/fragments :: topbar}"></header>
+
+        <main class="app-content" id="app-conteudo" tabindex="-1">
+            <th:block th:fragment="conteudo">
+            <div th:replace="~{layout/fragments :: mensagens}"></div>
+
+            <div class="page-header">
+    <div>
+        <div class="page-context">Quartos & insumos</div>
+        <h1 th:text="${titulo}">Quartos</h1>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-primary" th:href="@{/quartos/novo}">
+                    <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Novo quarto
+                </a>
+    </div>
+</div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body py-3">
+                    <form method="get" th:action="@{/quartos}" class="filtro-barra d-flex flex-wrap align-items-end gap-2">
+                        <div style="min-width: 180px">
+                            <label for="f-numero" class="form-label small text-secondary mb-1">Número</label>
+                            <input type="text" class="form-control form-control-sm" id="f-numero" name="numero"
+                                   th:value="${filtroNumero}" placeholder="Ex.: 101">
+                        </div>
+                        <div style="min-width: 180px">
+                            <label for="f-estado" class="form-label small text-secondary mb-1">Estado</label>
+                            <select class="form-select form-select-sm" id="f-estado" name="estado">
+                                <option value="">Todos</option>
+                                <option th:each="e : ${estados}" th:value="${e}" th:text="${e}"
+                                        th:selected="${filtroEstado == e}">DISPONIVEL</option>
+                            </select>
+                        </div>
+                        <div style="min-width: 220px">
+                            <label for="f-categoria" class="form-label small text-secondary mb-1">Categoria</label>
+                            <select class="form-select form-select-sm" id="f-categoria" name="categoriaId">
+                                <option value="">Todas</option>
+                                <option th:each="c : ${categorias}" th:value="${c.id}" th:text="${c.nome}"
+                                        th:selected="${filtroCategoriaId == c.id}">Standard</option>
+                            </select>
+                        </div>
+                        <div class="filtro-acao">
+                            <button type="submit" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-search me-1" aria-hidden="true"></i>Filtrar
+                            </button>
+                            <a class="btn-filtro-limpar" th:href="@{/quartos}">Limpar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <div th:if="${#lists.isEmpty(quartos)}">
+                        <div th:replace="~{layout/fragments :: estado-vazio('bi-door-open', 'Nenhum quarto encontrado para os filtros informados.')}"></div>
+                    </div>
+
+                    <div class="table-responsive" th:unless="${#lists.isEmpty(quartos)}">
+                        <table class="tabela-operacional table table-hover mb-0">
+                            <thead>
+                            <tr>
+                                <th>Número</th>
+                                <th>Categoria</th>
+                                <th class="col-centro">Andar</th>
+                                <th class="col-centro">Capacidade</th>
+                                <th class="col-centro">Estado</th>
+                                <th class="col-centro">Situação</th>
+                                <th style="width: 1%">Ações</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="quarto : ${quartos}" th:classappend="${!quarto.ativo} ? 'opacity-75'">
+                                <td>
+                                    <span class="fw-semibold" th:text="${quarto.numero}">101</span>
+                                    <span class="badge badge-estado-neutro ms-1" th:if="${!quarto.ativo}">Inativo</span>
+                                </td>
+                                <td th:text="${quarto.categoria.nome}">Standard</td>
+                                <td class="col-centro" th:text="${quarto.andar}">1</td>
+                                <td class="col-centro">
+                                    <span th:text="${quarto.capacidadeEfetiva}">2</span> hóspede(s)
+                                    <span class="text-secondary small d-block"
+                                          th:if="${quarto.capacidadeOperacional != null}">operacional</span>
+                                </td>
+                                <td class="col-centro">
+                                    <span th:replace="~{layout/fragments :: badge-estado-quarto(${quarto.estado})}"></span>
+                                </td>
+                                <td class="text-center" th:text="${quarto.ativo} ? 'Ativo' : 'Inativo'">Ativo</td>
+                                <td>
+                                    <div class="d-flex gap-1 justify-content-end">
+                                        <a class="btn btn-sm btn-outline-secondary" title="Editar"
+                                           th:href="@{'/quartos/' + ${quarto.id} + '/editar'}">
+                                             <i class="bi bi-pencil" aria-hidden="true"></i>
+                                         </a>
+                                        <form th:if="${quarto.estado.name() == 'DISPONIVEL'}"
+                                              th:action="@{'/quartos/' + ${quarto.id} + '/interditar'}" method="post"
+                                              th:attr="data-confirmar='Interditar o quarto ' + ${quarto.numero} + '? Ele não receberá hospedagens até ser liberado.'">
+                                             <button type="submit" class="btn btn-sm btn-outline-warning" title="Interditar">
+                                                 <i class="bi bi-cone-striped" aria-hidden="true"></i>
+                                             </button>
+                                         </form>
+                                        <form th:if="${quarto.estado.name() == 'INTERDITADO'}"
+                                              th:action="@{'/quartos/' + ${quarto.id} + '/liberar'}" method="post">
+                                             <button type="submit" class="btn btn-sm btn-outline-success" title="Liberar">
+                                                 <i class="bi bi-unlock" aria-hidden="true"></i>
+                                             </button>
+                                         </form>
+                                        <form th:if="${quarto.estado.name() == 'LIMPEZA'}"
+                                              th:action="@{'/quartos/' + ${quarto.id} + '/iniciar-limpeza'}" method="post">
+                                             <button type="submit" class="btn btn-sm btn-outline-secondary"
+                                                     title="Iniciar limpeza (tarefa em andamento)">
+                                                 <i class="bi bi-brush" aria-hidden="true"></i>
+                                             </button>
+                                         </form>
+                                        <form th:if="${quarto.estado.name() == 'LIMPEZA'}"
+                                              th:action="@{'/quartos/' + ${quarto.id} + '/concluir-limpeza'}" method="post">
+                                             <button type="submit" class="btn btn-sm btn-outline-success"
+                                                     title="Concluir limpeza (quarto volta a ficar disponível)">
+                                                 <i class="bi bi-stars" aria-hidden="true"></i>
+                                             </button>
+                                         </form>
+                                        <form th:action="@{'/quartos/' + ${quarto.id} + '/alternar-ativo'}" method="post"
+                                              th:attr="data-confirmar=${quarto.ativo} ? 'Desativar o quarto ' + ${quarto.numero} + '?' : null">
+                                             <button th:if="${quarto.ativo}" type="submit"
+                                                     class="btn btn-sm btn-outline-secondary" title="Desativar">
+                                                 <i class="bi bi-pause-circle" aria-hidden="true"></i>
+                                             </button>
+                                             <button th:unless="${quarto.ativo}" type="submit"
+                                                     class="btn btn-sm btn-outline-secondary" title="Ativar">
+                                                 <i class="bi bi-play-circle" aria-hidden="true"></i>
+                                             </button>
+                                         </form>
+                                        <form th:action="@{'/quartos/' + ${quarto.id} + '/excluir'}" method="post"
+                                              th:attr="data-confirmar='Excluir o quarto ' + ${quarto.numero} + '? Esta ação não pode ser desfeita.'">
+                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir">
+                                                 <i class="bi bi-trash" aria-hidden="true"></i>
+                                             </button>
+                                         </form>
+                                     </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+        </main>
+    </div>
+
+</div>
+<div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>

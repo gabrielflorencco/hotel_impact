@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head th:replace="~{layout/fragments :: head(${titulo})}"></head>
+<body data-area="admin">
+<a th:replace="~{layout/fragments :: pular-para-conteudo}"></a>
+<div class="app-wrapper">
+
+    <aside th:replace="~{layout/fragments :: sidebar('dashboard')}"></aside>
+
+    <div class="app-main">
+        <header th:replace="~{layout/fragments :: topbar}"></header>
+
+        <main class="app-content" id="app-conteudo" tabindex="-1">
+            <th:block th:fragment="conteudo">
+            <div th:replace="~{layout/fragments :: mensagens}"></div>
+
+            <div class="page-header">
+                <div>
+                    <div class="page-context">Operação</div>
+                    <h1 th:text="${titulo}">Painel</h1>
+                </div>
+            </div>
+
+            <!-- Indicadores do dia -->
+            <div class="row g-3 mb-3">
+                <div class="col-6 col-lg-3">
+                    <div class="kpi">
+                        <span class="kpi-rotulo">Hospedagens em andamento</span>
+                        <span class="kpi-valor"><span th:text="${ind.hospedagensEmAndamento}">0</span></span>
+                        <span class="kpi-detalhe">
+                            <span th:text="${ind.quartosOcupados}">0</span> de
+                            <span th:text="${ind.quartosAtivos}">0</span> quarto(s) ativo(s) ocupado(s)
+                        </span>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="kpi">
+                        <span class="kpi-rotulo">Chegadas de hoje</span>
+                        <span class="kpi-valor"><span th:text="${ind.chegadasPrevistasHoje}">0</span></span>
+                        <span class="kpi-detalhe">reservas ativas com check-in hoje</span>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="kpi">
+                        <span class="kpi-rotulo">Saídas de hoje</span>
+                        <span class="kpi-valor"><span th:text="${ind.saidasPrevistasHoje}">0</span></span>
+                        <span class="kpi-detalhe">reservas ativas com check-out hoje</span>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="kpi">
+                        <span class="kpi-rotulo">Receita confirmada hoje</span>
+                        <span class="kpi-valor">
+                            <span th:replace="~{layout/fragments :: dinheiro(${ind.receitaConfirmadaHoje})}">R$ 0,00</span>
+                        </span>
+                        <span class="kpi-detalhe">pagamentos registrados no dia</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Situação dos quartos: proporção de um relance -->
+            <div class="card shadow-sm mb-3" th:if="${ind.quartosAtivos > 0}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="kpi-rotulo">Situação dos quartos ativos</span>
+                        <a class="small link-acao" th:href="@{/quartos}">Gerenciar quartos <i class="bi bi-arrow-right-short" aria-hidden="true"></i></a>
+                    </div>
+                    <div class="barra-estados mb-2"
+                         th:with="total=${ind.quartosAtivos}">
+                        <span class="be-ok" th:styleappend="'width:' + (${ind.quartosDisponiveis} * 100 / ${total}) + '%'"></span>
+                        <span class="be-busy" th:styleappend="'width:' + (${ind.quartosOcupados} * 100 / ${total}) + '%'"></span>
+                        <span class="be-info" th:styleappend="'width:' + (${ind.quartosEmLimpeza} * 100 / ${total}) + '%'"></span>
+                        <span class="be-warn" th:styleappend="'width:' + (${ind.quartosEmManutencao} * 100 / ${total}) + '%'"></span>
+                        <span class="be-erro" th:styleappend="'width:' + (${ind.quartosInterditados} * 100 / ${total}) + '%'"></span>
+                    </div>
+                    <ul class="legenda-estados">
+                        <li><span style="--legenda: var(--hi-ok)"></span>Disponíveis: <strong th:text="${ind.quartosDisponiveis}">0</strong></li>
+                        <li><span style="--legenda: var(--hi-busy)"></span>Ocupados: <strong th:text="${ind.quartosOcupados}">0</strong></li>
+                        <li><span style="--legenda: var(--hi-info)"></span>Em limpeza: <strong th:text="${ind.quartosEmLimpeza}">0</strong></li>
+                        <li><span style="--legenda: var(--hi-warn)"></span>Em manutenção: <strong th:text="${ind.quartosEmManutencao}">0</strong></li>
+                        <li><span style="--legenda: var(--hi-danger)"></span>Interditados: <strong th:text="${ind.quartosInterditados}">0</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Alerta de estoque -->
+            <div class="hi-alerta alert alert-warning" th:if="${ind.itensComEstoqueBaixo > 0}" role="alert">
+                <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+                <span>
+                    <strong th:text="${ind.itensComEstoqueBaixo}">0</strong>
+                    item(ns) do catálogo com estoque no mínimo ou abaixo.
+                </span>
+                <a class="btn btn-sm btn-outline-warning ms-auto" th:href="@{/itens}">Ver catálogo</a>
+            </div>
+
+            <!-- Limpeza: estado das TAREFAS (não dos quartos) -->
+            <div class="hi-alerta alert alert-info" th:if="${ind.tarefasLimpezaPendentes > 0 or ind.tarefasLimpezaEmAndamento > 0}" role="status">
+                <i class="bi bi-brush" aria-hidden="true"></i>
+                <span>
+                    <strong th:text="${ind.tarefasLimpezaPendentes}">0</strong> tarefa(s) de limpeza pendente(s) e
+                    <strong th:text="${ind.tarefasLimpezaEmAndamento}">0</strong> em andamento —
+                    quartos aguardando governança.
+                </span>
+                <a class="btn btn-sm btn-outline-info ms-auto" th:href="@{/quartos}">Ver quartos</a>
+            </div>
+
+            <!-- Listas operacionais do dia -->
+            <div class="row g-3">
+                <div class="col-lg-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i>Chegadas de hoje</span>
+                            <a class="small link-acao" th:href="@{/reservas}">Todas as reservas <i class="bi bi-arrow-right-short" aria-hidden="true"></i></a>
+                        </div>
+                        <div class="card-body p-0">
+                            <div th:if="${#lists.isEmpty(chegadas)}" class="py-3">
+                                <div th:replace="~{layout/fragments :: estado-vazio('bi-calendar-check', 'Nenhuma chegada prevista para hoje.')}"></div>
+                            </div>
+                            <div class="table-responsive" th:unless="${#lists.isEmpty(chegadas)}">
+                                <table class="tabela-operacional table">
+                                    <tbody>
+                                    <tr th:each="reserva : ${chegadas}">
+                                        <td>
+                                            <a class="fw-semibold link-entidade" th:href="@{'/reservas/' + ${reserva.id}}"
+                                               th:text="${reserva.codigo}">RES-2026-000123</a>
+                                            <span class="d-block small text-secondary" th:text="${reserva.hospedeNome}">Ana Souza</span>
+                                        </td>
+                                        <td>
+                                            <span class="d-block small">Quarto <strong th:text="${reserva.quartoNumero}">101</strong></span>
+                                            <span class="small text-secondary" th:text="${reserva.noites} + ' noite(s)'">2 noite(s)</span>
+                                        </td>
+                                        <td class="col-num">
+                                            <span th:replace="~{layout/fragments :: dinheiro(${reserva.valorTotal})}">R$ 360,00</span>
+                                        </td>
+                                        <td>
+                                            <span th:replace="~{layout/fragments :: badge-estado-reserva(${reserva.estado})}">Pendente</span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i>Saídas de hoje</span>
+                            <a class="small link-acao" th:href="@{/hospedagens}">Todas as hospedagens <i class="bi bi-arrow-right-short" aria-hidden="true"></i></a>
+                        </div>
+                        <div class="card-body p-0">
+                            <div th:if="${#lists.isEmpty(saidas)}" class="py-3">
+                                <div th:replace="~{layout/fragments :: estado-vazio('bi-door-closed', 'Nenhuma saída prevista para hoje.')}"></div>
+                            </div>
+                            <div class="table-responsive" th:unless="${#lists.isEmpty(saidas)}">
+                                <table class="tabela-operacional table">
+                                    <tbody>
+                                    <tr th:each="reserva : ${saidas}">
+                                        <td>
+                                            <a class="fw-semibold link-entidade" th:href="@{'/reservas/' + ${reserva.id}}"
+                                               th:text="${reserva.codigo}">RES-2026-000123</a>
+                                            <span class="d-block small text-secondary" th:text="${reserva.hospedeNome}">Ana Souza</span>
+                                        </td>
+                                        <td>
+                                            <span class="d-block small">Quarto <strong th:text="${reserva.quartoNumero}">101</strong></span>
+                                            <span class="small text-secondary">check-out previsto hoje</span>
+                                        </td>
+                                        <td>
+                                            <span th:replace="~{layout/fragments :: badge-estado-reserva(${reserva.estado})}">Confirmada</span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Atividades recentes (auditoria resumida da operação) -->
+            <div class="card shadow-sm mt-3" th:if="${!#lists.isEmpty(atividades)}">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-clock-history me-1" aria-hidden="true"></i>Atividades recentes</span>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center small"
+                        th:each="ev : ${atividades}">
+                        <span>
+                            <i class="bi bi-activity me-1" aria-hidden="true" style="color: var(--hi-accent-text)"></i>
+                            <span class="fw-semibold" th:text="${ev.operacao}">CHECK_IN</span>
+                            <span class="text-secondary" th:text="${ev.detalhe}">detalhe</span>
+                        </span>
+                        <span class="text-secondary text-nowrap">
+                            <i class="bi bi-person me-1" aria-hidden="true"></i><span th:text="${ev.usuario}">sistema</span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </th:block>
+        </main>
+    </div>
+
+</div>
+<div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>

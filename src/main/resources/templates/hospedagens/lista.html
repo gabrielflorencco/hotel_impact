@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head th:replace="~{layout/fragments :: head(${titulo})}"></head>
+<body data-area="admin">
+<a th:replace="~{layout/fragments :: pular-para-conteudo}"></a>
+<div class="app-wrapper">
+
+    <aside th:replace="~{layout/fragments :: sidebar('hospedagens')}"></aside>
+
+    <div class="app-main">
+        <header th:replace="~{layout/fragments :: topbar}"></header>
+
+        <main class="app-content" id="app-conteudo" tabindex="-1">
+            <th:block th:fragment="conteudo">
+            <div th:replace="~{layout/fragments :: mensagens}"></div>
+
+            <div class="page-header">
+    <div>
+        <div class="page-context">Operação</div>
+        <h1 th:text="${titulo}">Hospedagens</h1>
+    </div>
+</div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body py-3">
+                    <form method="get" th:action="@{/hospedagens}" class="filtro-barra d-flex flex-wrap align-items-end gap-2">
+                        <div style="min-width: 180px">
+                            <label for="f-estado" class="form-label small text-secondary mb-1">Estado</label>
+                            <select class="form-select form-select-sm" id="f-estado" name="estado">
+                                <option value="">Todos</option>
+                                <option th:each="e : ${estados}" th:value="${e}" th:text="${e}"
+                                        th:selected="${filtroEstado == e}">EM_ANDAMENTO</option>
+                            </select>
+                        </div>
+                        <div class="filtro-acao">
+                            <button type="submit" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-search me-1" aria-hidden="true"></i>Filtrar
+                            </button>
+                            <a class="btn-filtro-limpar" th:href="@{/hospedagens}">Limpar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <div th:if="${#lists.isEmpty(pagina.content)}" class="py-2">
+                        <div th:replace="~{layout/fragments :: estado-vazio('bi-key', 'Nenhuma hospedagem encontrada. Os check-ins aparecem aqui.')}"></div>
+                    </div>
+
+                    <div class="table-responsive" th:unless="${#lists.isEmpty(pagina.content)}">
+                        <table class="tabela-operacional table table-hover mb-0">
+                            <thead>
+                            <tr>
+                                <th>Reserva</th>
+                                <th>Hóspede</th>
+                                <th>Quarto</th>
+                                <th>Check-in real</th>
+                                <th>Check-out real</th>
+                                <th>Estado</th>
+                                <th style="width: 1%">Ações</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="hospedagem : ${pagina.content}">
+                                <td>
+                                    <a class="fw-semibold link-entidade"
+                                       th:href="@{'/hospedagens/' + ${hospedagem.id}}"
+                                       th:text="${hospedagem.reservaCodigo}">RES-2026-000123</a>
+                                </td>
+                                <td th:text="${hospedagem.hospedeNome}">Ana Souza</td>
+                                <td th:text="${hospedagem.quartoNumero}">101</td>
+                                <td th:text="${#temporals.format(hospedagem.checkInReal, 'dd/MM/yyyy HH:mm')}">23/10/2026 14:00</td>
+                                <td th:text="${hospedagem.checkOutReal != null} ? ${#temporals.format(hospedagem.checkOutReal, 'dd/MM/yyyy HH:mm')} : '—'">—</td>
+                                <td>
+                                    <span th:replace="~{layout/fragments :: badge-estado-hospedagem(${hospedagem.estado})}">EM_ANDAMENTO</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1 justify-content-end">
+                                        <a class="btn btn-sm btn-outline-secondary" title="Detalhes"
+                                           th:href="@{'/hospedagens/' + ${hospedagem.id}}">
+                                             <i class="bi bi-eye" aria-hidden="true"></i>
+                                         </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="p-3 border-top d-flex justify-content-between align-items-center flex-wrap gap-2"
+                         th:if="${!#lists.isEmpty(pagina.content)}">
+                        <span class="small text-secondary">
+                            <span th:text="${pagina.numberOfElements}">15</span> registro(s) nesta página ·
+                            total de <span th:text="${pagina.totalElements}">0</span>
+                        </span>
+                        <span th:replace="~{layout/fragments :: paginacao(${pagina}, @{/hospedagens}, ${queryString})}"></span>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+        </main>
+    </div>
+
+</div>
+<div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>

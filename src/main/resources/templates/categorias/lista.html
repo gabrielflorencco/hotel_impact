@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head th:replace="~{layout/fragments :: head(${titulo})}"></head>
+<body data-area="admin">
+<a th:replace="~{layout/fragments :: pular-para-conteudo}"></a>
+<div class="app-wrapper">
+
+    <aside th:replace="~{layout/fragments :: sidebar('categorias')}"></aside>
+
+    <div class="app-main">
+        <header th:replace="~{layout/fragments :: topbar}"></header>
+
+        <main class="app-content" id="app-conteudo" tabindex="-1">
+            <th:block th:fragment="conteudo">
+            <div th:replace="~{layout/fragments :: mensagens}"></div>
+
+            <div class="page-header">
+    <div>
+        <div class="page-context">Cadastros</div>
+        <h1 th:text="${titulo}">Categorias</h1>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-primary" th:href="@{/categorias/novo}">
+                    <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Nova categoria
+                </a>
+    </div>
+</div>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <div th:if="${#lists.isEmpty(categorias)}" class="py-2">
+                        <div th:replace="~{layout/fragments :: estado-vazio('bi-tags', 'Nenhuma categoria cadastrada.')}"></div>
+                        <div class="text-center pb-4">
+                            <a class="btn btn-primary" th:href="@{/categorias/novo}">Cadastrar a primeira</a>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive" th:unless="${#lists.isEmpty(categorias)}">
+                        <table class="tabela-operacional table table-hover mb-0">
+                            <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th class="text-center">Capacidade</th>
+                                <th class="text-center">Camas</th>
+                                <th class="text-end">Preço-base (diária)</th>
+                                <th class="text-center">Situação</th>
+                                <th style="width: 1%">Ações</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="categoria : ${categorias}">
+                                <td>
+                                    <span class="fw-semibold" th:text="${categoria.nome}">Standard</span>
+                                    <div class="text-secondary small"
+                                         th:if="${categoria.descricao}"
+                                         th:text="${categoria.descricao}">Descrição</div>
+                                </td>
+                                <td class="text-center">
+                                    <span th:text="${categoria.capacidadeMaxima}">2</span> hóspede(s)
+                                </td>
+                                <td class="text-center" th:text="${categoria.quantidadeCamas}">1</td>
+                                <td class="text-end">
+                                    <span th:replace="~{layout/fragments :: dinheiro(${categoria.precoBase})}"></span>
+                                </td>
+                                <td class="text-center">
+                                    <span th:replace="~{layout/fragments :: badge-ativo(${categoria.ativo})}"></span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1 justify-content-end">
+                                        <a class="btn btn-sm btn-outline-secondary"
+                                           th:href="@{'/categorias/' + ${categoria.id} + '/editar'}"
+                                           title="Editar">
+                                             <i class="bi bi-pencil" aria-hidden="true"></i>
+                                         </a>
+                                         <form th:action="@{'/categorias/' + ${categoria.id} + '/alternar-ativo'}" method="post">
+                                             <button type="submit" class="btn btn-sm btn-outline-secondary"
+                                                     th:title="${categoria.ativo} ? 'Desativar categoria (quartos existentes são preservados)' : 'Reativar categoria'"
+                                                     th:aria-label="${categoria.ativo} ? 'Desativar categoria' : 'Reativar categoria'">
+                                                 <i class="bi" th:classappend="${categoria.ativo} ? 'bi-pause-circle' : 'bi-play-circle'" aria-hidden="true"></i>
+                                             </button>
+                                         </form>
+                                         <form th:action="@{'/categorias/' + ${categoria.id} + '/excluir'}" method="post"
+                                               th:attr="data-confirmar='Excluir a categoria ' + ${categoria.nome} + '? Esta ação não pode ser desfeita.'">
+                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir">
+                                                 <i class="bi bi-trash" aria-hidden="true"></i>
+                                             </button>
+                                         </form>
+                                     </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+        </main>
+    </div>
+
+</div>
+<div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>

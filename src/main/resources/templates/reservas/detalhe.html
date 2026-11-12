@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head th:replace="~{layout/fragments :: head(${titulo})}"></head>
+<body data-area="admin">
+<a th:replace="~{layout/fragments :: pular-para-conteudo}"></a>
+<div class="app-wrapper">
+
+    <aside th:replace="~{layout/fragments :: sidebar('reservas')}"></aside>
+
+    <div class="app-main">
+        <header th:replace="~{layout/fragments :: topbar}"></header>
+
+        <main class="app-content" id="app-conteudo" tabindex="-1">
+            <th:block th:fragment="conteudo">
+            <div th:replace="~{layout/fragments :: mensagens}"></div>
+
+            <div class="page-header">
+    <div>
+        <div class="page-context">Operação</div>
+        <h1 th:text="${titulo}">Detalhes da reserva</h1>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-outline-secondary btn-sm" th:href="@{/reservas}">
+            <i class="bi bi-arrow-left" aria-hidden="true"></i>Voltar
+        </a>
+    </div>
+</div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-xl-7">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+                                <i class="bi bi-calendar-check display-5 text-secondary" aria-hidden="true"></i>
+                                <div>
+                                    <h2 class="h4 mb-1" th:text="${reserva.codigo}">RES-2026-000123</h2>
+                                    <span th:replace="~{layout/fragments :: badge-estado-reserva(${reserva.estado})}">PENDENTE</span>
+                                </div>
+                                <span class="text-secondary small ms-auto">
+                                    Criada em <span th:text="${reserva.dataCriacao} ?: '—'">23/10/2026 11:30</span>
+                                </span>
+                            </div>
+
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4">Hóspede</dt>
+                                <dd class="col-sm-8">
+                                    <a class="link-entidade" th:href="@{/hospedes/ + ${reserva.hospedeId}}"
+                                       th:text="${reserva.hospedeNome}">Ana Souza</a>
+                                </dd>
+
+                                <dt class="col-sm-4">Quarto</dt>
+                                <dd class="col-sm-8" th:text="${reserva.quartoNumero}">101</dd>
+
+                                <dt class="col-sm-4">Período</dt>
+                                <dd class="col-sm-8">
+                                    <span th:text="${reserva.dataCheckIn}">01/11/2026</span> a
+                                    <span th:text="${reserva.dataCheckOut}">03/11/2026</span>
+                                    · <span th:text="${reserva.noites}">2</span> noite(s)
+                                </dd>
+
+                                <dt class="col-sm-4">Quantidade de hóspedes</dt>
+                                <dd class="col-sm-8" th:text="${reserva.quantidadeHospedes}">2</dd>
+
+                                <dt class="col-sm-4">Diária acordada</dt>
+                                <dd class="col-sm-8"><span th:replace="~{layout/fragments :: dinheiro(${reserva.valorDiaria})}">R$ 180,00</span></dd>
+
+                                <dt class="col-sm-4">Valor bruto</dt>
+                                <dd class="col-sm-8"><span th:replace="~{layout/fragments :: dinheiro(${reserva.valorBruto})}">R$ 360,00</span></dd>
+
+                                <dt class="col-sm-4">Desconto</dt>
+                                <dd class="col-sm-8"><span th:replace="~{layout/fragments :: dinheiro(${reserva.desconto})}">R$ 0,00</span></dd>
+
+                                <dt class="col-sm-4">Total</dt>
+                                <dd class="col-sm-8 fs-5">
+                                    <span class="fw-semibold" th:replace="~{layout/fragments :: dinheiro(${reserva.valorTotal})}">R$ 360,00</span>
+                                </dd>
+
+                                <dt class="col-sm-4">Justificativa de exceção</dt>
+                                <dd class="col-sm-8" th:text="${reserva.motivoExcecao} ?: '—'">—</dd>
+
+                                <dt class="col-sm-4">Observações</dt>
+                                <dd class="col-sm-8" th:text="${reserva.observacoes} ?: '—'">—</dd>
+                            </dl>
+                        </div>
+                        <div class="card-footer bg-transparent d-flex gap-2 flex-wrap">
+                            <form th:if="${reserva.estado.name() == 'PENDENTE'}" method="post"
+                                  th:action="@{'/reservas/' + ${reserva.id} + '/confirmar'}">
+                                <button type="submit" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-check-lg me-1" aria-hidden="true"></i>Confirmar reserva
+                                </button>
+                            </form>
+                            <a th:if="${podeEditar}" class="btn btn-outline-primary btn-sm"
+                               th:href="@{'/reservas/' + ${reserva.id} + '/editar'}">
+                                 <i class="bi bi-pencil me-1" aria-hidden="true"></i>Editar
+                             </a>
+                            <form th:if="${podeCheckIn}" method="post"
+                                  th:action="@{'/reservas/' + ${reserva.id} + '/check-in'}">
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-key me-1" aria-hidden="true"></i>Fazer check-in
+                                </button>
+                            </form>
+                            <a th:if="${hospedagemId != null}" class="btn btn-outline-primary btn-sm"
+                               th:href="@{'/hospedagens/' + ${hospedagemId}}">
+                                 <i class="bi bi-door-open me-1" aria-hidden="true"></i>Ver hospedagem
+                             </a>
+                            <form th:if="${podeNoShow}" method="post"
+                                  th:action="@{'/reservas/' + ${reserva.id} + '/no-show'}"
+                                  th:attr="data-confirmar='Registrar no-show na reserva ' + ${reserva.codigo} + '? O período voltará a ficar disponível.'">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-person-x me-1" aria-hidden="true"></i>Registrar no-show
+                                </button>
+                            </form>
+                            <form th:if="${reserva.ativa}" method="post"
+                                  th:action="@{'/reservas/' + ${reserva.id} + '/cancelar'}"
+                                  th:attr="data-confirmar='Cancelar a reserva ' + ${reserva.codigo} + '? O período voltará a ficar disponível.'">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-x-lg me-1" aria-hidden="true"></i>Cancelar reserva
+                                </button>
+                            </form>
+                            <a class="btn btn-outline-secondary btn-sm" th:href="@{/reservas}">
+                                <i class="bi bi-list me-1" aria-hidden="true"></i>Voltar à listagem
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+        </main>
+    </div>
+
+</div>
+<div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>

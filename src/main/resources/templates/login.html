@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head th:replace="~{site/fragments :: head(${titulo})}"></head>
+<body>
+<main class="login-pagina">
+    <div class="container">
+        <div class="row justify-content-center align-items-center g-0 login-cartao">
+            <!-- Lado da marca: a fachada acesa, como no site institucional -->
+            <div class="col-md-6 login-lado-marca d-none d-md-flex">
+                <div class="p-5 w-100">
+                    <img th:src="@{/images/hotelimpact-logo-simbolo.png}" alt="" class="login-simbolo mb-3" width="153" height="160">
+                    <h1 class="site-hero-title" style="font-size: 1.6rem">A recepção<br>começa aqui.</h1>
+                    <p class="mb-4" style="color: #8b98ab; font-size: .875rem">
+                        Painel operacional, reservas, hospedagens e a conta de cada hóspede.
+                    </p>
+                    <div class="w-100" style="max-width: 320px;">
+                        <img th:src="@{/img/hotel-quarto.jpg}" class="login-foto" alt=""
+      width="1000" height="667">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lado do formulário: operação e segurança -->
+            <div class="col-12 col-md-6 login-lado-form">
+                <div class="p-4 p-md-5">
+                    <div class="d-md-none text-center mb-4">
+                        <img th:src="@{/images/hotelimpact-logo.png}" alt="HotelImpact" class="login-logo-mobile" width="500" height="200">
+                        <span class="text-secondary small d-block mt-1">Gestão hoteleira · Recepção</span>
+                    </div>
+
+                    <img th:src="@{/images/hotelimpact-logo.png}" alt="HotelImpact" class="login-logo-form d-none d-md-block mb-3" width="500" height="200">
+                    <h2 class="h5 mb-1 d-none d-md-block">Entrar no sistema</h2>
+                    <p class="text-secondary small mb-4">Use as credenciais da recepção para acessar o painel.</p>
+
+                    <div class="hi-alerta alert alert-danger" th:if="${param.error}" role="alert">
+                        <i class="bi bi-exclamation-triangle" aria-hidden="true"></i><span>Usuário ou senha inválidos. Verifique e tente novamente.</span>
+                    </div>
+                    <div class="hi-alerta alert alert-success" th:if="${param.logout}" role="status">
+                        <i class="bi bi-check-circle" aria-hidden="true"></i><span>Sessão encerrada. Até logo!</span>
+                    </div>
+
+                    <form th:action="@{/login}" method="post" novalidate>
+                        <div class="mb-3">
+                            <label for="username" class="form-label campo-obrigatorio">Usuário</label>
+                            <input type="text" class="form-control" id="username" name="username"
+                                   autocomplete="username" required autofocus
+                                   spellcheck="false">
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label campo-obrigatorio">Senha</label>
+                            <input type="password" class="form-control" id="password" name="password"
+                                   autocomplete="current-password" required
+                                   spellcheck="false">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                    </form>
+
+                    <p class="text-secondary small mt-4 mb-0">
+                        <a class="site-nav-link" th:href="@{/}">← Voltar ao site</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<div th:replace="~{site/fragments :: scripts}"></div>
+</body>
+</html>
