@@ -6,10 +6,6 @@ import com.gabrielflorencco.hotel_impact.exception.NegocioException;
 
 import java.time.LocalDateTime;
 
-/**
- * Ordem de manutenção de um quarto. Ordens com interdição (ex.: CRÍTICA) tiram
- * o quarto de operação; a abertura valida a consistência com hospedagens ativas.
- */
 public class OrdemManutencao {
 
     private Long id;
@@ -115,12 +111,6 @@ public class OrdemManutencao {
         this.versao = versao;
     }
 
-    /*
-     * Máquina de estados da ordem: a ordem valida suas transições; o serviço
-     * orquestra o quarto e a persistência.
-     */
-
-    /** Inicia a execução da ordem. */
     public void iniciarExecucao() {
         if (estado != EstadoManutencao.ABERTA) {
             throw new NegocioException("Somente ordens abertas podem ser iniciadas.");
@@ -128,14 +118,12 @@ public class OrdemManutencao {
         estado = EstadoManutencao.EM_ANDAMENTO;
     }
 
-    /** Conclui a ordem (a restauração do quarto é orquestrada pelo serviço). */
     public void concluirOrdem() {
         exigirAtiva();
         estado = EstadoManutencao.CONCLUIDA;
         concluidaEm = LocalDateTime.now();
     }
 
-    /** Cancela a ordem (remoção lógica). */
     public void cancelarOrdem() {
         exigirAtiva();
         estado = EstadoManutencao.CANCELADA;

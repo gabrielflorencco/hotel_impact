@@ -3,11 +3,6 @@ package com.gabrielflorencco.hotel_impact.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * Hóspede do hotel. Campos de contato são opcionais; o CPF, quando informado,
- * é validado pelo algoritmo oficial de dígitos verificadores e armazenado
- * apenas com os 11 dígitos.
- */
 public class Hospede {
 
     private Long id;

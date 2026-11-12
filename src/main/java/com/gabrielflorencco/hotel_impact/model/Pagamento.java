@@ -8,11 +8,6 @@ import com.gabrielflorencco.hotel_impact.exception.NegocioException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Pagamento vinculado a uma hospedagem (múltiplos pagamentos são suportados).
- * Um pagamento confirmado é imutável quanto ao valor original; correções usam
- * estorno (uma única vez) e novo lançamento. Não armazena dados de cartão.
- */
 public class Pagamento implements Lancamento {
 
     private Long id;
@@ -101,10 +96,6 @@ public class Pagamento implements Lancamento {
         return estado == EstadoPagamento.CONFIRMADO;
     }
 
-    /**
-     * Estorno lógico, uma única vez: o registro permanece no histórico e
-     * o valor confirmado deixa de contar como recebido.
-     */
     public void estornar() {
         if (estado == EstadoPagamento.ESTORNADO) {
             throw new NegocioException("O pagamento já está estornado.");

@@ -5,11 +5,6 @@ import com.gabrielflorencco.hotel_impact.exception.NegocioException;
 
 import java.time.LocalDateTime;
 
-/**
- * Quarto do hotel. O estado operacional reflete a situação física atual do
- * quarto; a disponibilidade para um período de datas é calculada combinando
- * este estado com reservas e hospedagens conflitantes.
- */
 public class Quarto {
 
     private Long id;
@@ -98,10 +93,6 @@ public class Quarto {
         this.versao = versao;
     }
 
-    /**
-     * Capacidade usada nas validações de reserva: sobrescreve a da categoria
-     * quando definida.
-     */
     public int getCapacidadeEfetiva() {
         return capacidadeOperacional != null ? capacidadeOperacional : categoria.getCapacidadeMaxima();
     }
@@ -110,14 +101,6 @@ public class Quarto {
         return estado == EstadoQuarto.DISPONIVEL;
     }
 
-    /*
-     * Máquina de estados operacional do quarto: transições só por estas
-     * operações de domínio. Verificações que dependem do mundo externo
-     * (hospedagem ativa, ordem de manutenção) ficam nos serviços, que chamam
-     * estes métodos.
-     */
-
-    /** Ocupa o quarto no check-in (elegibilidade validada pelo serviço). */
     public void ocupar() {
         if (estado != EstadoQuarto.DISPONIVEL) {
             throw new NegocioException("Somente quartos disponíveis podem ser ocupados.");
@@ -125,7 +108,6 @@ public class Quarto {
         estado = EstadoQuarto.OCUPADO;
     }
 
-    /** Envia o quarto para limpeza no check-out. */
     public void enviarParaLimpeza() {
         if (estado != EstadoQuarto.OCUPADO) {
             throw new NegocioException("Somente quartos ocupados podem ser enviados para limpeza.");
@@ -133,7 +115,6 @@ public class Quarto {
         estado = EstadoQuarto.LIMPEZA;
     }
 
-    /** Conclui a limpeza pós-check-out e devolve o quarto à operação. */
     public void concluirLimpeza() {
         if (estado != EstadoQuarto.LIMPEZA) {
             throw new NegocioException("Somente quartos aguardando limpeza podem ser liberados.");
@@ -141,12 +122,10 @@ public class Quarto {
         estado = EstadoQuarto.DISPONIVEL;
     }
 
-    /** Interdição administrativa ou por ordem crítica (serviço garante ausência de hospedagem ativa). */
     public void interditar() {
         estado = EstadoQuarto.INTERDITADO;
     }
 
-    /** Libera uma interdição administrativa. */
     public void liberarInterdicao() {
         if (estado != EstadoQuarto.INTERDITADO) {
             throw new NegocioException("Somente quartos interditados podem ser liberados.");
@@ -154,7 +133,6 @@ public class Quarto {
         estado = EstadoQuarto.DISPONIVEL;
     }
 
-    /** Tira o quarto de operação para manutenção (chamado quando a ordem inicia). */
     public void iniciarManutencao() {
         if (estado != EstadoQuarto.DISPONIVEL && estado != EstadoQuarto.LIMPEZA) {
             throw new NegocioException("Somente quartos disponíveis ou em limpeza podem entrar em manutenção.");
@@ -162,7 +140,6 @@ public class Quarto {
         estado = EstadoQuarto.MANUTENCAO;
     }
 
-    /** Restaura a operação após manutenção/interdição da própria ordem (pré-condição garantida pelo chamador). */
     public void disponibilizar() {
         estado = EstadoQuarto.DISPONIVEL;
     }

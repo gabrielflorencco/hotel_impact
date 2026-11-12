@@ -1,29 +1,13 @@
-/* ==========================================================================
-   HotelImpact — design system "operação hoteleira"
-   ---------------------------------------------------------------------------
-   Direção: ERP profissional sóbrio. Neutros frios (slate) + âmbar queimado
-   como acento único (a "luz de hotel" — hospitalidade, não decoração).
-   Superfícies separadas por bordas, não por sombras. Dados com numerais
-   tabulares. Densidade compacta para uso diário na recepção.
+/* HotelImpact — design system "operação hoteleira" */
 
-   Bootstrap 5 fornece a fundação (grid, utilitários, componentes); este
-   arquivo define tokens, o shell da aplicação e os componentes próprios,
-   nos dois temas (claro/escuro).
-   ========================================================================== */
-
-/* ---- Tokens ----------------------------------------------------------------- */
-
-/* Superfícies fixas escuras — independem do tema global:
-   a navbar pública do site e a sidebar do aplicativo são sempre escuras
-   (identidade "luz de hotel"); o restante segue data-bs-theme. */
 :root {
-    --hi-nav-bg: #101725;                 /* top bar pública */
+    --hi-nav-bg: #101725;
     --hi-nav-border: rgba(255, 255, 255, .08);
     --hi-nav-link: #b6c2d2;
     --hi-nav-link-hover: #ffffff;
-    --hi-nav-active: #fcd34d;             /* item ativo sobre fundo escuro */
+    --hi-nav-active: #fcd34d;
 
-    --hi-sidebar-bg: #16202f;             /* sidebar administrativa */
+    --hi-sidebar-bg: #16202f;
     --hi-sidebar-bg-hover: #22304a;
     --hi-sidebar-text: #b6c2d2;
     --hi-sidebar-muted: #8a96a5;
@@ -35,35 +19,27 @@
 
 :root,
 [data-bs-theme="light"] {
-    /* Superfícies e texto */
     --hi-page-bg: #f6f7f9;
     --hi-surface: #ffffff;
     --hi-text: #1a2332;
     --hi-text-secondary: #5b6879;
 
-    /* Cor de ação: âmbar da marca (identidade da logo) */
     --hi-accent: #b45309;
     --hi-accent-hover: #92400e;
-    --hi-accent-text: #92400e;          /* textos/eyebrows sobre claro */
-    --hi-accent-soft: #fdf3e7;          /* fundo suave para realces */
+    --hi-accent-text: #92400e;
+    --hi-accent-soft: #fdf3e7;
 
-    /* Estado semântico (dot + rótulo) */
     --hi-ok: #16a34a;
     --hi-warn: #d97706;
     --hi-danger: #dc2626;
     --hi-info: #2563eb;
     --hi-busy: #7c3aed;
 
-    /* Bordas e forma */
     --hi-border: #e3e8ef;
     --hi-border-strong: #cdd5e0;
     --hi-radius: .375rem;
     --hi-radius-lg: .5rem;
-
-    /* Sombras mínimas: separação é por borda */
     --hi-shadow: 0 1px 2px rgba(15, 23, 42, .04);
-
-    /* Topbar */
     --hi-topbar-bg: #ffffff;
 }
 
@@ -87,14 +63,11 @@
     --hi-border: #273349;
     --hi-border-strong: #36455f;
     --hi-shadow: 0 1px 2px rgba(0, 0, 0, .3);
-
     --hi-topbar-bg: #131b2c;
-
-    color-scheme: dark;                 /* barras de rolagem e inputs nativos */
+    color-scheme: dark;
 }
 
 :root {
-    /* Escala de espaçamento (ritmo 4/8) */
     --hi-space-1: .25rem;
     --hi-space-2: .5rem;
     --hi-space-3: 1rem;
@@ -105,29 +78,25 @@
     --hi-topbar-height: 52px;
 }
 
-/* ---- Base ------------------------------------------------------------------ */
 body {
     background-color: var(--hi-page-bg);
     color: var(--hi-text);
-    font-size: .9375rem;                /* base levemente compacta de ERP */
+    font-size: .9375rem;
     -webkit-font-smoothing: antialiased;
 }
 
-/* Numerais tabulares em todo dado quantitativo do sistema. */
 .numerico,
 .table,
 th, dd, dt, .badge, .form-label, .page-link, .btn {
     font-variant-numeric: tabular-nums;
 }
 
-/* Foco visível para navegação por teclado. */
 :is(a, button, input, select, textarea, [tabindex]):focus-visible {
     outline: 2px solid var(--hi-accent);
     outline-offset: 2px;
     border-radius: var(--hi-radius);
 }
 
-/* Movimento só quando o usuário aceita movimento. */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
         transition-duration: .01ms !important;
@@ -136,7 +105,6 @@ th, dd, dt, .badge, .form-label, .page-link, .btn {
     }
 }
 
-/* ---- Botão primário: identidade âmbar --------------------------------------- */
 .btn-primary {
     --bs-btn-bg: var(--hi-accent);
     --bs-btn-border-color: var(--hi-accent);
@@ -154,7 +122,6 @@ th, dd, dt, .badge, .form-label, .page-link, .btn {
     --bs-btn-active-color: #20130a;
 }
 
-/* ---- Shell: sidebar + área principal ----------------------------------------- */
 .app-wrapper { display: flex; min-height: 100vh; }
 
 .app-main {
@@ -173,11 +140,10 @@ th, dd, dt, .badge, .form-label, .page-link, .btn {
     .app-main { margin-left: var(--hi-sidebar-width); }
 }
 
-/* ---- Sidebar ----------------------------------------------------------------- */
 .sidebar.offcanvas-lg,
 .sidebar {
     width: var(--hi-sidebar-width);
-    background-color: var(--hi-sidebar-bg) !important; /* Bootstrap zera o bg do .offcanvas-lg em telas grandes */
+    background-color: var(--hi-sidebar-bg) !important;
     color: var(--hi-sidebar-text);
     display: flex;
     flex-direction: column;
@@ -206,8 +172,6 @@ th, dd, dt, .badge, .form-label, .page-link, .btn {
 
 .sidebar-brand i { color: var(--hi-sidebar-accent); font-size: 1.15rem; }
 
-/* Símbolo da logo na sidebar: proporcional, sem invadir a topbar nem o
-   botão de recolher; no modo colapsado, centralizado como ícone. */
 .sidebar-simbolo {
     width: 1.75rem;
     height: auto;
@@ -288,7 +252,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
 .sidebar-perfil i { font-size: 1.375rem; color: var(--hi-sidebar-accent); }
 .sidebar-perfil .perfil-nome { color: var(--hi-sidebar-brand); font-weight: 600; font-size: .8125rem; }
 
-/* Botão de logout da sidebar: variante clara legível sobre fundo escuro. */
 .sidebar-perfil .btn-outline-secondary {
     --bs-btn-color: var(--hi-sidebar-muted);
     --bs-btn-border-color: rgba(255, 255, 255, .22);
@@ -302,7 +265,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
 .sidebar-perfil .perfil-papel { display: block; font-size: .6875rem; }
 .sidebar-perfil form { margin-left: auto; }
 
-/* ---- Topbar ------------------------------------------------------------------- */
 .topbar {
     min-height: var(--hi-topbar-height);
     background-color: var(--hi-topbar-bg);
@@ -315,7 +277,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     font-variant-numeric: tabular-nums;
 }
 
-/* ---- Cabeçalho de página (padrão de todas as telas) ------------------------------ */
 .page-header {
     display: flex;
     flex-wrap: wrap;
@@ -365,7 +326,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     flex-wrap: wrap;
 }
 
-/* ---- Cartões e superfícies ------------------------------------------------------ */
 .card {
     background-color: var(--hi-surface);
     border-color: var(--hi-border);
@@ -392,7 +352,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     box-shadow: var(--hi-shadow);
 }
 
-/* ---- Tabela operacional (densidade ERP) ------------------------------------------ */
 .tabela-operacional {
     --bs-table-bg: transparent;
     margin-bottom: 0;
@@ -423,7 +382,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
 
 .table > :not(caption) > * > * { vertical-align: middle; }
 
-/* Linha de ações por registro: ícones discretos, alvo de toque confortável. */
 .acoes-linha {
     display: inline-flex;
     gap: .375rem;
@@ -437,7 +395,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     line-height: 1.2;
 }
 
-/* ---- Badges de status: ponto + rótulo legível ------------------------------------- */
 .badge-status {
     display: inline-flex;
     align-items: center;
@@ -459,7 +416,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     flex-shrink: 0;
 }
 
-/* Variações semânticas — o rótulo vem do fragment; a cor nunca é o único sinal. */
 .badge-estado-ok      { color: #166534; background-color: #ecfdf5; }
 .badge-estado-atencao { color: #92400e; background-color: #fffbeb; }
 .badge-estado-neutro  { color: #475569; background-color: #eef2f7; }
@@ -474,14 +430,11 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
 [data-bs-theme="dark"] .badge-estado-info    { color: #93c5fd; background-color: #16283f; }
 [data-bs-theme="dark"] .badge-estado-ocupado  { color: #c4b5fd; background-color: #2b2145; }
 
-/* ---- Formulários ------------------------------------------------------------------- */
 .form-label { font-size: .8125rem; font-weight: 500; color: var(--hi-text); margin-bottom: .25rem; }
-
 .form-text { font-size: .75rem; color: var(--hi-text-secondary); }
 
 .campo-obrigatorio::after { content: " *"; color: var(--bs-danger); }
 
-/* Resumo de erros focável no topo do formulário (acessibilidade). */
 .resumo-erros {
     border: 1px solid var(--hi-danger);
     border-radius: var(--hi-radius);
@@ -494,7 +447,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
 .resumo-erros ul { margin: 0; padding-left: 1.25rem; }
 .resumo-erros a { color: var(--bs-danger); }
 
-/* ---- Mensagens de feedback ----------------------------------------------------------- */
 .hi-alerta {
     display: flex;
     align-items: flex-start;
@@ -508,7 +460,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
 .hi-alerta i { margin-top: .125rem; }
 .hi-alerta .btn-close { margin-left: auto; }
 
-/* ---- Estados vazios -------------------------------------------------------------------- */
 .empty-state {
     display: flex;
     flex-direction: column;
@@ -519,7 +470,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     text-align: center;
 }
 
-/* ---- Indicadores do painel (KPIs densos, sem cartões coloridos) --------------------------- */
 .kpi {
     display: flex;
     flex-direction: column;
@@ -536,7 +486,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
 .kpi .kpi-detalhe { font-size: .75rem; color: var(--hi-text-secondary); }
 .kpi .kpi-valor .unidade { font-size: .8125rem; font-weight: 500; color: var(--hi-text-secondary); }
 
-/* Barra segmentada de estados dos quartos (proporção de um relance). */
 .barra-estados { display: flex; height: .5rem; border-radius: 999px; overflow: hidden; }
 .barra-estados > span { display: block; height: 100%; min-width: 2px; }
 .barra-estados .be-ok      { background-color: var(--hi-ok); }
@@ -545,18 +494,15 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
 .barra-estados .be-warn    { background-color: var(--hi-warn); }
 .barra-estados .be-erro    { background-color: var(--hi-danger); }
 
-/* Legenda da barra: ponto quadrado na cor + rótulo + número. */
 .legenda-estados { display: flex; flex-wrap: wrap; gap: .375rem 1rem; margin: 0; padding: 0; list-style: none; }
 .legenda-estados li { display: flex; align-items: center; gap: .375rem; font-size: .75rem; color: var(--hi-text-secondary); }
 .legenda-estados li::before { content: ""; width: .5rem; height: .5rem; border-radius: 2px; background-color: var(--legenda, currentColor); }
 
-/* ---- Paginação compacta --------------------------------------------------------------------- */
 .pagination { --bs-pagination-font-size: .8125rem; }
 .pagination .page-link { color: var(--hi-text); border-color: var(--hi-border); }
 .pagination .page-item.active .page-link { background-color: var(--hi-accent); border-color: var(--hi-accent); }
 [data-bs-theme="dark"] .pagination .page-item.active .page-link { color: #20130a; }
 
-/* ---- Login -------------------------------------------------------------------------------------- */
 .login-pagina {
     min-height: 100vh;
     display: flex;
@@ -606,12 +552,9 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
 .login-lado-form { background-color: var(--hi-surface); }
 
 .login-simbolo { width: 3rem; height: auto; }
-
 .login-logo-form { height: 3rem; width: auto; margin: auto; }
-
 .login-logo-mobile { height: 2rem; width: auto; }
 
-/* Botão outline-primary: verde do design system em ambos os temas. */
 .btn-outline-primary {
     --bs-btn-color: var(--hi-accent-text);
     --bs-btn-border-color: var(--hi-accent);
@@ -629,14 +572,12 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     --bs-btn-active-color: #06231a;
 }
 
-/* Botões outline: texto com contraste ≥4.5 sobre o fundo da página. */
 .btn-outline-secondary {
     --bs-btn-color: var(--hi-text-secondary);
     --bs-btn-hover-color: var(--hi-text);
     --bs-btn-active-color: var(--hi-text);
 }
 
-/* Kicker de páginas claras do site (sobre/sobre/funcionalidades) */
 .site-kicker {
     font-size: .75rem;
     font-weight: 600;
@@ -646,7 +587,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     margin-bottom: .75rem;
 }
 
-/* Links de entidade em tabelas: cor do texto, sublinha só no hover (não o azul padrão). */
 .link-entidade {
     color: var(--hi-text);
     text-decoration: none;
@@ -657,7 +597,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     text-decoration: underline;
 }
 
-/* Links de ação curta ("ver mais") nos cabeçalhos de card do painel. */
 .link-acao {
     color: var(--hi-text-secondary);
     text-decoration: none;
@@ -669,7 +608,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     text-decoration: underline;
 }
 
-/* Limpar filtros: link discreto, hierarquia abaixo do botão de filtrar. */
 .btn-filtro-limpar {
     background: none;
     border: 0;
@@ -685,10 +623,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     text-decoration: underline;
 }
 
-/* ---- Site institucional público --------------------------------------------------------- */
-
-/* Top bar sempre escura nos dois temas (identidade "luz de hotel"): usa os
-   tokens fixos --hi-nav-*, nunca os de tema. */
 .site-nav {
     background-color: var(--hi-nav-bg);
     border-bottom: 1px solid var(--hi-nav-border);
@@ -704,9 +638,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     text-decoration: none;
 }
 
-/* Sobre o fundo escuro fixo, a marca é sempre o símbolo âmbar + nome em
-   texto claro (a logo completa, com "Hotel" em grafite, não tem contraste
-   sobre superfície escura e permanece no login e no rodapé). */
 .site-brand .site-logo-completa { display: none; }
 .site-brand .site-logo-simbolo { display: block; width: 2rem; height: auto; }
 .site-brand .site-brand-nome {
@@ -716,7 +647,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     color: var(--hi-nav-link-hover);
 }
 
-/* Botão de alternância de tema da top bar: discreto, claro sobre escuro. */
 .site-nav .btn-tema {
     --bs-btn-border-width: 1px;
     --bs-btn-color: var(--hi-nav-link);
@@ -734,7 +664,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     outline-offset: 2px;
 }
 
-/* Em telas estreitas a marca reduz para conviver com a navegação. */
 @media (max-width: 767.98px) {
     .site-brand .site-logo-simbolo { width: 1.625rem; }
     .site-brand .site-brand-nome { font-size: 1rem; }
@@ -756,7 +685,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
 .site-nav-link.active { color: var(--hi-nav-active); font-weight: 600; }
 .site-nav-link:focus-visible { outline: 2px solid var(--hi-sidebar-accent); outline-offset: 2px; border-radius: .25rem; }
 
-/* Hero claro: fotografia à direita, texto sobre fundo branco. */
 .site-hero {
     padding: var(--hi-space-5) 0;
     background-color: var(--hi-surface);
@@ -799,7 +727,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
 
 .site-fachada { display: block; width: 100%; max-width: 100%; height: auto; }
 
-/* Números editoriais dos pilares */
 .site-numeral {
     font-variant-numeric: tabular-nums;
     color: var(--hi-accent-text);
@@ -807,7 +734,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     margin-right: .5rem;
 }
 
-/* Cards sob o hero: superfície clara, ícone âmbar, descrição secundária. */
 .site-cards-escuros {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -838,7 +764,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
 .site-card-escuro h3 { color: var(--hi-text); font-size: .9375rem; font-weight: 650; margin-bottom: .375rem; }
 .site-card-escuro p { font-size: .8125rem; line-height: 1.55; margin: 0; }
 
-/* Faixa de módulos: superfície quente sutil, não card colorido */
 .site-faixa { background-color: var(--hi-accent-soft); }
 
 .site-modulos {
@@ -860,7 +785,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
 
 .site-modulos i { color: var(--hi-accent-text); }
 
-/* Bloco de funcionalidade: borda esquerda de leitura, sem sombra */
 .site-funcionalidade {
     border-left: 3px solid var(--hi-border-strong);
     padding-left: 1.25rem;
@@ -875,7 +799,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     font-size: .875rem;
 }
 
-/* Grupos expansíveis da sidebar */
 .sidebar-grupo-btn {
     display: flex;
     align-items: center;
@@ -900,7 +823,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     display: none;
 }
 
-/* Sidebar recolhida (desktop): só ícones, tooltips via title nativo. */
 @media (min-width: 992px) {
     body.sidebar-colapsada { --hi-sidebar-width: 64px; }
 
@@ -927,9 +849,6 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
     }
 }
 
-/* ---- Movimento: tokens e princípios -----------------------------------------------------------
-   Animações têm função de feedback e orientação — nunca decorativa.
-   Durações curtas (100-250ms), easing de saída; reduced-motion desliga. */
 :root {
     --hi-duracao-rapida: 100ms;
     --hi-duracao: 160ms;
@@ -949,14 +868,11 @@ body.sidebar-colapsada .sidebar-simbolo { width: 1.875rem; }
         transition-duration: .01ms !important;
     }
 
-    /* O spinner comunica estado sem girar: círculo estático. */
     .hi-spinner { animation: none !important; }
 }
 
-/* Smooth scrolling para âncoras internas (não interfere no htmx nem no histórico). */
 html { scroll-behavior: smooth; }
 
-/* ---- Botões: feedback discreto de interação ----------------------------------------------- */
 .btn {
     transition:
         color var(--hi-duracao) var(--hi-easing),
@@ -966,19 +882,15 @@ html { scroll-behavior: smooth; }
         transform var(--hi-duracao-rapida) var(--hi-easing);
 }
 
-/* Elevação de 1px no hover dos botões enfatizados (sem escala, sem salto). */
 .btn-primary:not(:disabled):hover {
     box-shadow: var(--hi-elevacao);
     transform: translateY(-1px);
 }
 
-/* Pressionado: retorna ao plano imediatamente — sensação de clique físico. */
 .btn:not(:disabled):active { transform: translateY(0); }
 
-/* Desabilitado: sem elevação, cursor explícito, sem transição de transform. */
 .btn:disabled { cursor: not-allowed; transform: none; box-shadow: none; }
 
-/* ---- Sidebar: transição de recolhimento suave ---------------------------------------------- */
 @media (min-width: 992px) {
     .sidebar,
     .app-main { transition: width var(--hi-duracao-lenta) var(--hi-easing); }
@@ -986,7 +898,6 @@ html { scroll-behavior: smooth; }
 
 .sidebar-colapsada .sidebar { transition: width var(--hi-duracao-lenta) var(--hi-easing); }
 
-/* Itens e rótulos da sidebar entram/saem com o recolhimento (opacity curta). */
 .sidebar-brand-nome,
 .sidebar-grupo-nome,
 .sidebar-nav a span,
@@ -996,7 +907,6 @@ html { scroll-behavior: smooth; }
     transition: opacity var(--hi-duracao) var(--hi-easing);
 }
 
-/* ---- Alertas flash: entrada discreta de conteúdo ------------------------------------------- */
 .hi-alerta {
     animation: hi-entrada-suave var(--hi-duracao-lenta) var(--hi-easing);
 }
@@ -1006,7 +916,6 @@ html { scroll-behavior: smooth; }
     to   { opacity: 1; transform: none; }
 }
 
-/* ---- Spinner circular (feedback de carregamento) --------------------------------------------- */
 .hi-spinner {
     display: inline-block;
     width: 1.25rem;
@@ -1018,7 +927,6 @@ html { scroll-behavior: smooth; }
     vertical-align: -0.2em;
 }
 
-/* Versão compacta para dentro de botões. */
 .hi-spinner--btn {
     width: .9375rem;
     height: .9375rem;
@@ -1026,7 +934,6 @@ html { scroll-behavior: smooth; }
     vertical-align: -0.125em;
 }
 
-/* Botão em processamento: rótulo trocado por spinner + texto curto. */
 .btn.hi-carregando {
     pointer-events: none;
     opacity: .85;
@@ -1036,9 +943,6 @@ html { scroll-behavior: smooth; }
     to { transform: rotate(360deg); }
 }
 
-/* ---- Camada de carregamento de área (navegação parcial demorada) ----------------------------
-   Aparece sobre o conteúdo com atraso (controlado pelo JS) para não
-   cintilar em operações rápidas; não cobre a tela inteira. */
 .carregando-area {
     position: absolute;
     inset: 0;
@@ -1052,10 +956,8 @@ html { scroll-behavior: smooth; }
     font-size: .875rem;
 }
 
-/* O contêiner do conteúdo vira referência do overlay. */
 #app-conteudo { position: relative; }
 
-/* Indicador de navegação SPA: sutil, no topo, apenas durante a troca. */
 .indicador-nav {
     display: inline-flex;
     align-items: center;
@@ -1068,6 +970,5 @@ html { scroll-behavior: smooth; }
 
 .indicador-nav.ativo { opacity: 1; }
 
-/* ---- Utilidades ------------------------------------------------------------------------------- */
 .text-secondary { color: var(--hi-text-secondary) !important; }
 .text-nowrap { white-space: nowrap; }

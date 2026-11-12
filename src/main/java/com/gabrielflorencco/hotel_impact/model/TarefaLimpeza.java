@@ -5,9 +5,6 @@ import com.gabrielflorencco.hotel_impact.exception.NegocioException;
 
 import java.time.LocalDateTime;
 
-/**
- * Tarefa de limpeza de um quarto. O histórico de tarefas concluídas é preservado.
- */
 public class TarefaLimpeza {
 
     private Long id;
@@ -77,14 +74,6 @@ public class TarefaLimpeza {
         this.versao = versao;
     }
 
-    /*
-     * Máquina de estados da tarefa de limpeza: PENDENTE → EM_EXECUCAO →
-     * CONCLUIDA. Uma tarefa concluída é histórico — nunca é reiniciada
-     * (o quarto em LIMPEZA é a ponta "viva" do ciclo; a tarefa registra
-     * quem ficou pendente, quando foi executada e quando terminou).
-     */
-
-    /** Inicia a execução da limpeza pelo governo do quarto. */
     public void iniciar() {
         if (estado != EstadoTarefaLimpeza.PENDENTE) {
             throw new NegocioException("Somente tarefas de limpeza pendentes podem ser iniciadas.");
@@ -92,7 +81,6 @@ public class TarefaLimpeza {
         estado = EstadoTarefaLimpeza.EM_EXECUCAO;
     }
 
-    /** Conclui a tarefa e registra o encerramento — o histórico fica preservado. */
     public void concluir() {
         if (estado == EstadoTarefaLimpeza.CONCLUIDA) {
             throw new NegocioException("A tarefa de limpeza já foi concluída.");
@@ -101,7 +89,6 @@ public class TarefaLimpeza {
         concluidaEm = LocalDateTime.now();
     }
 
-    /** Tarefa ainda em aberto (pendente ou em execução). */
     public boolean aberta() {
         return estado != EstadoTarefaLimpeza.CONCLUIDA;
     }

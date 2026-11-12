@@ -4,11 +4,6 @@ import com.gabrielflorencco.hotel_impact.enums.TipoItem;
 
 import java.math.BigDecimal;
 
-/**
- * Item do catálogo de produtos e serviços consumíveis. Produtos podem controlar
- * estoque; serviços nunca controlam. O estoque nunca pode ficar negativo
- * (também garantido por constraint de banco).
- */
 public class ItemCatalogo {
 
     private Long id;
@@ -110,7 +105,6 @@ public class ItemCatalogo {
                 && estoqueAtual <= estoqueMinimo;
     }
 
-    /** Serviços nunca controlam estoque, independente da flag. */
     public boolean isEstoqueControladoEfetivo() {
         return tipo == TipoItem.PRODUTO && Boolean.TRUE.equals(controlaEstoque);
     }

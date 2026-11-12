@@ -18,12 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 
-/**
- * Regras de negócio dos pagamentos de uma hospedagem: registro confirmado,
- * estorno lógico único (o valor original nunca é editado) e o saldo devedor
- * da conta — reserva + consumos ativos − pagamentos confirmados. Estornados
- * não contam como recebidos.
- */
 @Service
 public class PagamentoService {
 

@@ -21,17 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Regras de negócio das ordens de manutenção: uma ordem ativa por quarto,
- * abertura proibida com hospedagem em andamento (o hóspede não pode ser
- * despejado por manutenção) e prioridade CRÍTICA interdita o quarto — a não
- * ser que ele já esteja interditado por outra razão, caso em que a ordem
- * não assume a interdição e não vai liberá-lo ao final.
- *
- * A execução coloca o quarto em MANUTENCAO; a conclusão ou o cancelamento
- * devolvem DISPONIVEL apenas quando o estado foi causado pela própria
- * ordem — interdições administrativas prevalecem.
- */
 @Service
 public class ManutencaoService {
 

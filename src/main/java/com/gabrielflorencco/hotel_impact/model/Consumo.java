@@ -7,12 +7,6 @@ import com.gabrielflorencco.hotel_impact.exception.NegocioException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Lançamento de consumo em uma hospedagem. O preço unitário é capturado no
- * lançamento para preservar o histórico. Lançamentos nunca são excluídos:
- * correções usam cancelamento (estorno lógico) que restitui o estoque uma
- * única vez.
- */
 public class Consumo implements Lancamento {
 
     private Long id;
@@ -119,10 +113,6 @@ public class Consumo implements Lancamento {
         return estado == EstadoConsumo.ATIVO;
     }
 
-    /**
-     * Cancela o lançamento (estorno lógico único); a restituição do estoque
-     * é orquestrada pelo serviço.
-     */
     public void cancelar() {
         if (estado == EstadoConsumo.CANCELADO) {
             throw new NegocioException("O lançamento já está cancelado.");

@@ -12,16 +12,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-/**
- * Formulário de reserva. Não há campo de identificação nem de estado: nesta
- * fatia reservas não são editadas (datas e valores são históricos) e o estado
- * só muda pelas operações explícitas de confirmação e cancelamento. O código,
- * o total e o estado inicial são sempre definidos pelo servidor.
- *
- * A consistência entre as datas (check-out após check-in), a justificativa
- * para datas passadas e o limite do desconto são validados na camada de
- * serviço, pois dependem de valores combinados e do contexto do negócio.
- */
 public class ReservaForm {
 
     /** Presente apenas na edição (action do formulário); nulo na criação. */

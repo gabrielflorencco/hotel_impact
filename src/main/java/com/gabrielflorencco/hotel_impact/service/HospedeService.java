@@ -14,11 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Regras de negócio dos hóspedes: CPF único (quando informado), normalização
- * para 11 dígitos, busca por nome/CPF/telefone/e-mail e exclusão bloqueada
- * quando há reservas associadas.
- */
 @Service
 public class HospedeService {
 

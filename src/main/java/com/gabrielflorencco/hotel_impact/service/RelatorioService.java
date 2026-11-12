@@ -14,13 +14,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Relatórios por período: números calculados com consultas de
- * contagem e soma no banco — check-ins/check-outs reais, receita confirmada,
- * reservas criadas (por estado, incluindo cancelamentos e no-shows) e a
- * lista das hospedagens iniciadas no período. Períodos são semiabertos
- * [inicio, fim), medidos à meia-noite.
- */
 @Service
 public class RelatorioService {
 

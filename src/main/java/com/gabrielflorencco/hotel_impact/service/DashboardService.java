@@ -21,12 +21,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Indicadores do painel, calculados com consultas de contagem e
- * soma no banco — nada de carregar entidades para contar no aplicativo.
- * O dia de "hoje" é resolvido uma única vez para que todos os indicadores
- * refiram-se ao mesmo dia.
- */
 @Service
 public class DashboardService {
 

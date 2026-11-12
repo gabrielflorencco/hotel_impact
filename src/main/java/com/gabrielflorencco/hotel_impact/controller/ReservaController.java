@@ -27,10 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-/**
- * Navegação e formulários de reservas. A criação redireciona para os detalhes
- * da reserva criada, onde o código gerado e o total calculado ficam visíveis.
- */
 @Controller
 @RequestMapping("/reservas")
 public class ReservaController {

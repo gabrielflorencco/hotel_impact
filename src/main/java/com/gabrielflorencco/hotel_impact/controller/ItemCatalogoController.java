@@ -17,11 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-/**
- * Catálogo de produtos e serviços consumíveis. Regras de negócio no
- * service; aqui apenas validação de formulário, mensagens e
- * redirecionamentos (POST-redirect-GET).
- */
 @Controller
 @RequestMapping("/itens")
 public class ItemCatalogoController {

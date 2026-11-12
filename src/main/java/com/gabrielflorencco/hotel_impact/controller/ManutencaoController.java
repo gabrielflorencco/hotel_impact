@@ -25,11 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-/**
- * Navegação e operações de ordens de manutenção. A prioridade CRÍTICA
- * interdita o quarto; a conclusão/cancelamento restaura o estado apenas
- * quando a própria ordem causou a mudança.
- */
 @Controller
 @RequestMapping("/manutencoes")
 public class ManutencaoController {

@@ -7,9 +7,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-/**
- * Atributos comuns a todas as páginas: data atual exibida na barra superior.
- */
 @ControllerAdvice
 public class UiAdvice {
 

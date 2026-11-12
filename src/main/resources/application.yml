@@ -2,39 +2,29 @@ spring:
   application:
     name: hotel_impact
 
-  # Porta HTTP: respeita a variável PORT do ambiente; padrão 8080 localmente.
   server:
     port: ${PORT:8080}
 
-  # Conexão com PostgreSQL exclusivamente por variáveis de ambiente.
-  # Os valores padrão apontam para um banco local em execução na porta 5432.
   datasource:
     url: ${SPRING_DATASOURCE_URL:DB_URL_PLACEHOLDER}
     username: ${SPRING_DATASOURCE_USERNAME:DB_CREDENTIAL_PLACEHOLDER}
     password: ${SPRING_DATASOURCE_PASSWORD:DB_CREDENTIAL_PLACEHOLDER}
     driver-class-name: org.DB_CREDENTIAL_PLACEHOLDERql.Driver
 
-  # Inicialização do banco pelo mecanismo nativo do Spring Boot (sem Flyway).
-  # O schema é executado sempre (mode: always) com CREATE TABLE IF NOT EXISTS,
-  # de modo que a aplicação pode reiniciar repetidamente sem erros.
   sql:
     init:
       mode: always
       schema-locations: classpath:schema-DB_CREDENTIAL_PLACEHOLDER.sql
 
-  # Thymeleaf: cache desabilitado em desenvolvimento; habilitar em produção.
   thymeleaf:
     cache: false
 
-  # Autenticação: usuário único de recepção via variáveis de ambiente.
-  # O padrão local serve apenas ao desenvolvimento.
   security:
     user:
       name: ${HOTELIMPACT_USER:RECEPCIONISTA_USER_PLACEHOLDER}
       password: ${HOTELIMPACT_PASSWORD:RECEPCIONISTA_PASSWORD_PLACEHOLDER}
       roles: RECEPCAO
 
-# Dados de demonstração fictícios (desligados por padrão).
 app:
   seed-demo: ${APP_SEED_DEMO:false}
 

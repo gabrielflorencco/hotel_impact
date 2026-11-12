@@ -7,12 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-/**
- * Painel inicial: indicadores operacionais calculados no banco
- * (quartos por estado, hospedagens, chegadas/saídas do dia, receita e
- * alerta de estoque) e as listas de chegadas e saídas do dia — a rotina
- * de abertura da recepção.
- */
 @Controller
 public class HomeController {
 

@@ -6,11 +6,6 @@ import com.gabrielflorencco.hotel_impact.exception.NegocioException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Hospedagem: a ocupação real do quarto, originada de uma reserva (1:1).
- * Registra datas e horas reais de check-in e check-out, independentes das
- * datas previstas na reserva.
- */
 public class Hospedagem {
 
     private Long id;
@@ -102,22 +97,11 @@ public class Hospedagem {
         return estado == EstadoHospedagem.EM_ANDAMENTO;
     }
 
-    /** Início da estadia: registra o check-in e abre a hospedagem. */
     public void abrir(LocalDateTime checkInReal) {
         this.checkInReal = checkInReal;
         this.estado = EstadoHospedagem.EM_ANDAMENTO;
     }
 
-    /*
-     * Encerramento da hospedagem: a própria hospedagem valida seu estado e
-     * o saldo da conta — o serviço calcula o saldo (consulta lançamentos) e
-     * orquestra reserva e quarto na mesma transação.
-     */
-
-    /**
-     * Encerramento normal: exige hospedagem em andamento e conta quitada.
-     * Sobrecarga de negócio — o caminho sem justificativa só aceita saldo zero.
-     */
     public void encerrar(BigDecimal saldoDevedor) {
         if (estado != EstadoHospedagem.EM_ANDAMENTO) {
             throw new NegocioException("Somente hospedagens em andamento podem ser encerradas.");
@@ -130,11 +114,6 @@ public class Hospedagem {
         checkOutReal = LocalDateTime.now();
     }
 
-    /**
-     * Encerramento com justificativa: com saldo pendente, exige motivo e
-     * caracteriza o encerramento excepcional (hospedagem CANCELADA com o
-     * motivo registrado); com conta quitada, encerra normalmente.
-     */
     public void encerrar(BigDecimal saldoDevedor, String motivoExcecao) {
         if (estado != EstadoHospedagem.EM_ANDAMENTO) {
             throw new NegocioException("Somente hospedagens em andamento podem ser encerradas.");

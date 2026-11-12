@@ -12,11 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 
-/**
- * Relatórios por período. O período padrão é o mês corrente; a
- * listagem traz as hospedagens iniciadas no período, com os números
- * calculados no banco pelo serviço.
- */
 @Controller
 @RequestMapping("/relatorios")
 public class RelatorioController {

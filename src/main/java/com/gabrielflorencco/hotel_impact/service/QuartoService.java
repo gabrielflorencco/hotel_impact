@@ -19,11 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * Regras de negócio dos quartos: número único, categoria ativa para novos
- * quartos, estados alterados somente por operações explícitas e exclusão
- * bloqueada quando há histórico.
- */
 @Service
 public class QuartoService {
 

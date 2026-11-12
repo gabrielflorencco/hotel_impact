@@ -12,12 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * Regras de negócio do catálogo de produtos e serviços: nome único, preço
- * positivo, serviços nunca controlam estoque (a flag é ignorada) e
- * exclusão bloqueada quando há lançamentos de consumo que preservam o
- * histórico — nesses casos, orienta-se a desativação.
- */
 @Service
 public class ItemCatalogoService {
 

@@ -30,12 +30,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-/**
- * Navegação e operações de hospedagens. O check-in parte sempre de uma
- * reserva; aqui ficam a listagem, o detalhe — que traz a conta com consumos e pagamentos —,
- * o check-out (normal ou excepcional, quando há saldo pendente), o lançamento/cancelamento de
- * consumos e o registro/estorno de pagamentos.
- */
 @Controller
 @RequestMapping("/hospedagens")
 public class HospedagemController {

@@ -23,16 +23,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Regras de negócio das reservas: períodos semiabertos [check-in, check-out),
- * disponibilidade do quarto (estado operacional + reservas ativas conflitantes),
- * capacidade efetiva, diária histórica com total calculado no servidor,
- * exceção administrativa para datas passadas e código único gerado pelo sistema.
- *
- * Reservas nunca são excluídas fisicamente: preservam o histórico (mesma regra
- * que bloqueia a exclusão de hóspedes e quartos vinculados); o cancelamento é
- * a única forma de liberar o período.
- */
 @Service
 public class ReservaService {
 

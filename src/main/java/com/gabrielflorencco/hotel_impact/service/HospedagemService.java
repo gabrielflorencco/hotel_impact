@@ -23,13 +23,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-/**
- * Regras de negócio das hospedagens: a ocupação real do quarto, originada de
- * uma reserva (1:1). O check-in exige reserva ativa (pendente ou confirmada)
- * na data prevista, sem hospedagem anterior, e quarto ativo e disponível; o
- * check-out encerra a hospedagem, conclui a reserva e envia o quarto para
- * limpeza.
- */
 @Service
 public class HospedagemService {
 

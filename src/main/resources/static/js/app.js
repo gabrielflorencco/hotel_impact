@@ -1,10 +1,6 @@
-/* HotelImpact — comportamentos de interface.
-   Tudo por delegação de eventos: o conteúdo é trocado dinamicamente pela
-   navegação SPA (htmx) e nenhum listener é perdido com a troca. */
 (function () {
     'use strict';
 
-    // Aplica o tema salvo (ou a preferência do sistema) antes da primeira pintura.
     var temaSalvo = localStorage.getItem('hi-tema');
     var prefereEscuro = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     document.documentElement.setAttribute('data-bs-theme', temaSalvo || (prefereEscuro ? 'dark' : 'light'));
@@ -23,8 +19,6 @@
             && a.target !== '_blank';
     }
 
-    /* Atraso antes de qualquer indicador visível: operações rápidas
-       (a maioria) terminam antes e nada pisca na tela. */
     var ATRASO_INDICADOR = 220;
 
     var timerIndicador = null;
@@ -48,8 +42,6 @@
         removerCarregamentoArea();
     }
 
-    /* Overlay discreto sobre o conteúdo quando a navegação demora —
-       atrasado como o indicador do topo; nunca cobre a tela inteira. */
     var timerArea = null;
 
     function aplicarCarregamentoArea() {
@@ -83,8 +75,6 @@
         }
     }
 
-    /* Botão em processamento: spinner compacto + rótulo de estado; o botão
-       original é restaurado em erro (no sucesso, o swap substitui o form). */
     function botaoEmCarregamento(form) {
         var botao = form.querySelector('button[type=submit]');
         if (!botao || botao.classList.contains('hi-carregando')) return;
@@ -107,9 +97,6 @@
         }
     }
 
-    /* Rede de segurança: qualquer resposta htmx (sucesso, erro HTTP ou
-       falha de rede) limpa o estado de carregamento — nenhum botão
-       permanece travado. Registrado uma única vez (delegação global). */
     document.addEventListener('htmx:afterRequest', function (evento) {
         esconderIndicador();
         var form = evento.detail && evento.detail.elt && evento.detail.elt.closest
@@ -136,15 +123,12 @@
         if (dados) opcoes.values = dados;
         window.htmx.ajax(verbo, url, opcoes).then(function () {
             esconderIndicador();
-            // Título do documento a partir do h1 do conteúdo recém-trocado.
             var h1 = document.querySelector(ALVO_CONTEUDO + ' h1');
             document.title = (h1 ? h1.textContent.trim() + ' · ' : '') + 'HotelImpact';
             atualizarSidebarAtiva();
             var foco = document.getElementById('conteudoPrincipal');
             if (foco && foco.focus) foco.focus({preventScroll: true});
         }).catch(function () {
-            // Falha de rede ou resposta inválida: recarrega o documento para
-            // alcançar o tratamento de erro completo do servidor.
             esconderIndicador();
             location.assign(url);
         });
@@ -154,10 +138,6 @@
         return document.body && document.body.getAttribute('data-area') === 'admin';
     }
 
-    /* Seleção ativa da sidebar: derivada da URL atual a cada troca de
-       conteúdo (a marca server-side vale só para o carregamento completo).
-       Correspondência por maior prefixo com fronteira de segmento — evita
-       ambiguidades entre caminhos semelhantes e ignora a query string. */
     function atualizarSidebarAtiva() {
         if (!ehSessaoAdministrativa()) return;
         var nav = document.querySelector('.sidebar-nav');
@@ -183,7 +163,6 @@
             else a.removeAttribute('aria-current');
         });
 
-        // Expande o grupo que contém o item ativo, se estiver recolhido.
         if (melhor) {
             var itens = melhor.closest('.sidebar-grupo-itens');
             if (itens && itens.id && itens.id.indexOf('grupo-') === 0) {
@@ -208,7 +187,6 @@
         botao.setAttribute('aria-label', escuro ? 'Ativar modo claro' : 'Ativar modo escuro');
     }
 
-    // Confirmação e tema por delegação — captura antes do submit da SPA.
     document.addEventListener('click', function (evento) {
         var botaoTema = evento.target.closest('#botaoTema');
         if (botaoTema) {
@@ -226,7 +204,6 @@
         }
     }, true);
 
-    // Navegação SPA: links internos da área administrativa.
     document.addEventListener('click', function (evento) {
         if (evento.defaultPrevented || !ehSessaoAdministrativa()) return;
         if (evento.metaKey || evento.ctrlKey || evento.shiftKey || evento.altKey) return;
@@ -236,17 +213,14 @@
         trocarConteudo(link.getAttribute('href'), 'GET');
     });
 
-    // Formulários da área administrativa: filtros GET e ações POST por SPA.
     document.addEventListener('submit', function (evento) {
         var form = evento.target;
         if (!(form instanceof HTMLFormElement) || form.hasAttribute('hx-post') || form.hasAttribute('hx-get')) {
             return;
         }
         if (!ehSessaoAdministrativa()) {
-            return; // login, logout e site público seguem o fluxo completo
+            return;
         }
-        // Logout é fluxo de segurança: encerra a sessão e recarrega o
-        // documento inteiro (a SPA não deve injetar a resposta no shell).
         var acao = (form.getAttribute('action') || '');
         if (form.method.toLowerCase() === 'post' && acao.indexOf('/logout') !== -1) {
             return;
@@ -259,21 +233,16 @@
             trocarConteudo(acao + (query ? (acao.indexOf('?') === -1 ? '?' : '&') + query : ''), 'GET');
             return;
         }
-        // Ação demorada (POST): feedback no botão e defesa contra dupla
-        // submissão enquanto a operação está em andamento.
         botaoEmCarregamento(form);
         trocarConteudo(form.getAttribute('action') || location.pathname, 'POST', new FormData(form));
     });
 
-    // Voltar/avançar do navegador dentro da sessão administrativa.
     window.addEventListener('popstate', function () {
         if (ehSessaoAdministrativa()) {
             trocarConteudo(location.pathname + location.search, 'GET');
         }
     });
 
-    // Pré-preenche a diária com o preço-base da categoria do quarto escolhido
-    // (por delegação, sobrevive a trocas de conteúdo).
     document.addEventListener('change', function (evento) {
         var selecao = evento.target.closest('select[data-preco-alvo]');
         if (!selecao) return;
@@ -291,7 +260,6 @@
             campo.setAttribute('data-editado', 'true');
         }
     });
-    // Grupos expansíveis da sidebar (delegação; estado persistido).
     document.addEventListener('click', function (evento) {
         var grupo = evento.target.closest('.sidebar-grupo-btn');
         if (grupo) {
@@ -301,7 +269,6 @@
         }
     });
 
-    // Recolher/expandir a sidebar no desktop (delegação; estado persistido).
     document.addEventListener('click', function (evento) {
         if (evento.target.closest('#botaoRecolherSidebar')) {
             var colapsada = document.body.classList.toggle('sidebar-colapsada');
@@ -318,18 +285,15 @@
             botaoInicial.setAttribute('aria-label', escuro ? 'Ativar modo claro' : 'Ativar modo escuro');
         }
 
-        // restaura estado dos grupos
         document.querySelectorAll('.sidebar-grupo-btn').forEach(function (grupo) {
             var estado = localStorage.getItem('hi-grupo-' + grupo.getAttribute('data-grupo'));
             if (estado === 'fechado') {
                 grupo.setAttribute('aria-expanded', 'false');
             }
         });
-        // restaura estado da sidebar
         if (localStorage.getItem('hi-sidebar') === 'colapsada') {
             document.body.classList.add('sidebar-colapsada');
         }
-        // seleção ativa coerente com a URL no carregamento (completo ou direto)
         atualizarSidebarAtiva();
     });
 })();

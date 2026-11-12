@@ -18,13 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 
-/**
- * Regras de negócio dos consumos lançados numa hospedagem: preço unitário
- * histórico capturado no lançamento, total calculado no servidor, baixa de
- * estoque apenas para produtos com controle efetivo e cancelamento como
- * estorno lógico que restitui o estoque uma única vez. Lançamentos nunca
- * são excluídos — preservam o histórico da conta.
- */
 @Service
 public class ConsumoService {
 

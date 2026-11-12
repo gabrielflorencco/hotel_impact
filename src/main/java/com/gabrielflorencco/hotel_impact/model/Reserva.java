@@ -8,12 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-/**
- * Reserva: o compromisso futuro de hospedagem. Períodos são intervalos
- * semiabertos [check-in, check-out). O valor da diária e o total são
- * históricos — mudanças no preço-base da categoria não afetam reservas
- * existentes. O total e o bruto são sempre calculados no backend.
- */
 public class Reserva {
 
     private Long id;
@@ -155,29 +149,18 @@ public class Reserva {
         this.versao = versao;
     }
 
-    /** Número de noites do período semiaberto [check-in, check-out). */
     public long getQuantidadeNoites() {
         return ChronoUnit.DAYS.between(dataCheckIn, dataCheckOut);
     }
 
-    /** Valor bruto da hospedagem sem desconto. */
     public BigDecimal getValorBruto() {
         return valorDiaria.multiply(BigDecimal.valueOf(getQuantidadeNoites()));
     }
 
-    /** Reservas em estado que bloqueia a disponibilidade do quarto. */
     public boolean isAtiva() {
         return estado == EstadoReserva.PENDENTE || estado == EstadoReserva.CONFIRMADA;
     }
 
-    /*
-     * Máquina de estados da reserva: a própria reserva é a única capaz de
-     * transitar seu estado. Os serviços orquestram as verificações que
-     * dependem do mundo externo (check-in existente, data passada,
-     * persistência) e chamam estas operações de domínio.
-     */
-
-    /** Confirma uma reserva pendente. */
     public void confirmar() {
         if (estado != EstadoReserva.PENDENTE) {
             throw new NegocioException("Somente reservas pendentes podem ser confirmadas.");
@@ -185,7 +168,6 @@ public class Reserva {
         estado = EstadoReserva.CONFIRMADA;
     }
 
-    /** Cancela uma reserva ativa — o serviço garante que ainda não houve check-in. */
     public void cancelar() {
         if (!isAtiva()) {
             throw new NegocioException("Somente reservas pendentes ou confirmadas podem ser canceladas.");
@@ -193,7 +175,6 @@ public class Reserva {
         estado = EstadoReserva.CANCELADA;
     }
 
-    /** Registra o não-comparecimento — o serviço garante data de chegada passada e ausência de check-in. */
     public void registrarNoShow() {
         if (!isAtiva()) {
             throw new NegocioException("Somente reservas pendentes ou confirmadas podem ser registradas como no-show.");
@@ -201,12 +182,6 @@ public class Reserva {
         estado = EstadoReserva.NO_SHOW;
     }
 
-    /**
-     * Reprograma a reserva (edição controlada): período e desconto são
-     * validados localmente e o total é recalculado no servidor —
-     * diária × noites − desconto. Verificações externas (disponibilidade,
-     * capacidade, quarto em operação) pertencem ao serviço.
-     */
     public void reprogramar(Hospede novoHospede, Quarto novoQuarto,
                             LocalDate novoCheckIn, LocalDate novoCheckOut,
                             Integer novaQuantidade, BigDecimal novaDiaria,
@@ -233,7 +208,6 @@ public class Reserva {
         this.observacoes = observacoes == null || observacoes.isBlank() ? null : observacoes.trim();
     }
 
-    /** Conclui a reserva no check-out da hospedagem. */
     public void concluir() {
         if (!isAtiva()) {
             throw new NegocioException("Somente reservas ativas podem ser concluídas.");

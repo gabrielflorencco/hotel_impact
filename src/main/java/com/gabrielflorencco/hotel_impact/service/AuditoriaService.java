@@ -12,13 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-/**
- * Auditoria de operações de negócio: registra quem executou cada transição
- * crítica, na mesma transação da operação. O usuário vem do contexto de
- * segurança (Spring Security) com fallback "sistema" para execuções sem
- * sessão (seed, testes de serviço) — as entidades de negócio permanecem
- * desacopladas de HTTP e de segurança.
- */
 @Service
 public class AuditoriaService {
 

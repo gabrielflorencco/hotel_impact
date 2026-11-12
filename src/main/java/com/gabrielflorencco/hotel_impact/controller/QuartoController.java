@@ -21,10 +21,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Arrays;
 
-/**
- * Navegação e formulários de quartos, incluindo as operações administrativas
- * de interdição/liberação. O estado operacional nunca é editado no formulário.
- */
 @Controller
 @RequestMapping("/quartos")
 public class QuartoController {

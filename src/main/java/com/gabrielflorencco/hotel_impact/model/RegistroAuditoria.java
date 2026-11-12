@@ -4,15 +4,6 @@ import com.gabrielflorencco.hotel_impact.enums.OperacaoAuditoria;
 
 import java.time.LocalDateTime;
 
-/**
- * Evento de auditoria de operação de negócio: registro histórico imutável —
- * sem setters, criado no momento da operação e jamais alterado. A mesma
- * transação da operação audita garante consistência (a operação e o
- * registro persistem juntos ou nada persiste).
- *
- * Nenhum dado sensível é gravado: apenas o identificador do usuário
- * autenticado, a operação e a referência ao registro afetado.
- */
 public class RegistroAuditoria {
 
     private Long id;

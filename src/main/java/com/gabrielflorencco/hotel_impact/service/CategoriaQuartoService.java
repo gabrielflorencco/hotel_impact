@@ -11,10 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * Regras de negócio das categorias de quarto: nome único, exclusão bloqueada
- * quando há quartos referenciando e controle de ativação.
- */
 @Service
 public class CategoriaQuartoService {
 

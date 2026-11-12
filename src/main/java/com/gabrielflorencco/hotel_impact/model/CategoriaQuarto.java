@@ -3,11 +3,6 @@ package com.gabrielflorencco.hotel_impact.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-/**
- * Categoria de acomodação (ex.: Standard, Luxo, Suíte). Define capacidade de
- * referência e preço-base da diária; o preço acordado em cada reserva é sempre
- * histórico.
- */
 public class CategoriaQuarto {
 
     private Long id;
@@ -77,11 +72,6 @@ public class CategoriaQuarto {
         this.ativo = ativo;
     }
 
-    /**
-     * Alterna a categoria entre ativa e inativa. Categorias inativas não
-     * podem ser vinculadas a novos quartos, mas quartos e históricos
-     * existentes são preservados.
-     */
     public void alternarAtivo() {
         this.ativo = !Boolean.TRUE.equals(this.ativo);
     }
