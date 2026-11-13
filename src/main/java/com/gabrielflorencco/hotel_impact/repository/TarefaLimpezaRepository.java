@@ -28,31 +28,31 @@ public class TarefaLimpezaRepository {
         @Override
         public TarefaLimpeza mapRow(ResultSet rs, int rowNum) throws SQLException {
             TarefaLimpeza t = new TarefaLimpeza();
-            t.setId(rs.getLong("id"));
-            t.setEstado(EstadoTarefaLimpeza.valueOf(rs.getString("estado")));
-            t.setCriadaEm(rs.getTimestamp("criada_em") != null ? rs.getTimestamp("criada_em").toLocalDateTime() : null);
-            t.setConcluidaEm(rs.getTimestamp("concluida_em") != null ? rs.getTimestamp("concluida_em").toLocalDateTime() : null);
-            t.setObservacoes(rs.getString("observacoes"));
-            t.setVersao(rs.getLong("versao"));
+            t.setId(rs.getLong("t_id"));
+            t.setEstado(EstadoTarefaLimpeza.valueOf(rs.getString("t_estado")));
+            t.setCriadaEm(rs.getTimestamp("t_criada_em") != null ? rs.getTimestamp("t_criada_em").toLocalDateTime() : null);
+            t.setConcluidaEm(rs.getTimestamp("t_concluida_em") != null ? rs.getTimestamp("t_concluida_em").toLocalDateTime() : null);
+            t.setObservacoes(rs.getString("t_observacoes"));
+            t.setVersao(rs.getLong("t_versao"));
 
             com.gabrielflorencco.hotel_impact.model.Quarto q = new com.gabrielflorencco.hotel_impact.model.Quarto();
-            q.setId(rs.getLong("q.id"));
-            q.setNumero(rs.getString("q.numero"));
-            q.setAndar(rs.getInt("q.andar"));
-            q.setCapacidadeOperacional(rs.getObject("q.capacidade_operacional") != null ? rs.getInt("q.capacidade_operacional") : null);
-            q.setEstado(com.gabrielflorencco.hotel_impact.enums.EstadoQuarto.valueOf(rs.getString("q.estado")));
-            q.setObservacoes(rs.getString("q.observacoes"));
-            q.setAtivo(rs.getBoolean("q.ativo"));
-            q.setVersao(rs.getLong("q.versao"));
+            q.setId(rs.getLong("q_id"));
+            q.setNumero(rs.getString("q_numero"));
+            q.setAndar(rs.getInt("q_andar"));
+            q.setCapacidadeOperacional(rs.getObject("q_capacidade_operacional") != null ? rs.getInt("q_capacidade_operacional") : null);
+            q.setEstado(com.gabrielflorencco.hotel_impact.enums.EstadoQuarto.valueOf(rs.getString("q_estado")));
+            q.setObservacoes(rs.getString("q_observacoes"));
+            q.setAtivo(rs.getBoolean("q_ativo"));
+            q.setVersao(rs.getLong("q_versao"));
 
             com.gabrielflorencco.hotel_impact.model.CategoriaQuarto cat = new com.gabrielflorencco.hotel_impact.model.CategoriaQuarto();
-            cat.setId(rs.getLong("cat.id"));
-            cat.setNome(rs.getString("cat.nome"));
-            cat.setDescricao(rs.getString("cat.descricao"));
-            cat.setCapacidadeMaxima(rs.getInt("cat.capacidade_maxima"));
-            cat.setQuantidadeCamas(rs.getInt("cat.quantidade_camas"));
-            cat.setPrecoBase(rs.getBigDecimal("cat.preco_base"));
-            cat.setAtivo(rs.getBoolean("cat.ativo"));
+            cat.setId(rs.getLong("cat_id"));
+            cat.setNome(rs.getString("cat_nome"));
+            cat.setDescricao(rs.getString("cat_descricao"));
+            cat.setCapacidadeMaxima(rs.getInt("cat_capacidade_maxima"));
+            cat.setQuantidadeCamas(rs.getInt("cat_quantidade_camas"));
+            cat.setPrecoBase(rs.getBigDecimal("cat_preco_base"));
+            cat.setAtivo(rs.getBoolean("cat_ativo"));
             q.setCategoria(cat);
 
             t.setQuarto(q);
@@ -62,14 +62,15 @@ public class TarefaLimpezaRepository {
 
     public boolean existsByQuartoId(Long quartoId) {
         String sql = "SELECT 1 FROM tarefa_limpeza WHERE quarto_id = ?";
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, quartoId));
+        List<Boolean> result = jdbcTemplate.query(sql, (rs, rowNum) -> true, quartoId);
+        return !result.isEmpty();
     }
 
     public List<TarefaLimpeza> findByEstadoOrderByCriadaEmAsc(EstadoTarefaLimpeza estado) {
         String sql = """
-            SELECT t.id, t.quarto_id, t.estado, t.criada_em, t.concluida_em, t.observacoes, t.versao,
-                   q.id, q.numero, q.andar, q.capacidade_operacional, q.estado, q.observacoes, q.ativo, q.versao,
-                   cat.id, cat.nome, cat.descricao, cat.capacidade_maxima, cat.quantidade_camas, cat.preco_base, cat.ativo
+            SELECT t.id AS t_id, t.quarto_id AS t_quarto_id, t.estado AS t_estado, t.criada_em AS t_criada_em, t.concluida_em AS t_concluida_em, t.observacoes AS t_observacoes, t.versao AS t_versao,
+                   q.id AS q_id, q.numero AS q_numero, q.andar AS q_andar, q.capacidade_operacional AS q_capacidade_operacional, q.estado AS q_estado, q.observacoes AS q_observacoes, q.ativo AS q_ativo, q.versao AS q_versao,
+                   cat.id AS cat_id, cat.nome AS cat_nome, cat.descricao AS cat_descricao, cat.capacidade_maxima AS cat_capacidade_maxima, cat.quantidade_camas AS cat_quantidade_camas, cat.preco_base AS cat_preco_base, cat.ativo AS cat_ativo
             FROM tarefa_limpeza t
             JOIN quarto q ON t.quarto_id = q.id
             JOIN categoria_quarto cat ON q.categoria_id = cat.id
@@ -81,9 +82,9 @@ public class TarefaLimpezaRepository {
 
     public List<TarefaLimpeza> findByQuartoIdOrderByCriadaEmDesc(Long quartoId) {
         String sql = """
-            SELECT t.id, t.quarto_id, t.estado, t.criada_em, t.concluida_em, t.observacoes, t.versao,
-                   q.id, q.numero, q.andar, q.capacidade_operacional, q.estado, q.observacoes, q.ativo, q.versao,
-                   cat.id, cat.nome, cat.descricao, cat.capacidade_maxima, cat.quantidade_camas, cat.preco_base, cat.ativo
+            SELECT t.id AS t_id, t.quarto_id AS t_quarto_id, t.estado AS t_estado, t.criada_em AS t_criada_em, t.concluida_em AS t_concluida_em, t.observacoes AS t_observacoes, t.versao AS t_versao,
+                   q.id AS q_id, q.numero AS q_numero, q.andar AS q_andar, q.capacidade_operacional AS q_capacidade_operacional, q.estado AS q_estado, q.observacoes AS q_observacoes, q.ativo AS q_ativo, q.versao AS q_versao,
+                   cat.id AS cat_id, cat.nome AS cat_nome, cat.descricao AS cat_descricao, cat.capacidade_maxima AS cat_capacidade_maxima, cat.quantidade_camas AS cat_quantidade_camas, cat.preco_base AS cat_preco_base, cat.ativo AS cat_ativo
             FROM tarefa_limpeza t
             JOIN quarto q ON t.quarto_id = q.id
             JOIN categoria_quarto cat ON q.categoria_id = cat.id
@@ -100,9 +101,9 @@ public class TarefaLimpezaRepository {
 
     public Optional<TarefaLimpeza> findFirstByQuartoIdAndEstadoNotOrderByCriadaEmDesc(Long quartoId, EstadoTarefaLimpeza estado) {
         String sql = """
-            SELECT t.id, t.quarto_id, t.estado, t.criada_em, t.concluida_em, t.observacoes, t.versao,
-                   q.id, q.numero, q.andar, q.capacidade_operacional, q.estado, q.observacoes, q.ativo, q.versao,
-                   cat.id, cat.nome, cat.descricao, cat.capacidade_maxima, cat.quantidade_camas, cat.preco_base, cat.ativo
+            SELECT t.id AS t_id, t.quarto_id AS t_quarto_id, t.estado AS t_estado, t.criada_em AS t_criada_em, t.concluida_em AS t_concluida_em, t.observacoes AS t_observacoes, t.versao AS t_versao,
+                   q.id AS q_id, q.numero AS q_numero, q.andar AS q_andar, q.capacidade_operacional AS q_capacidade_operacional, q.estado AS q_estado, q.observacoes AS q_observacoes, q.ativo AS q_ativo, q.versao AS q_versao,
+                   cat.id AS cat_id, cat.nome AS cat_nome, cat.descricao AS cat_descricao, cat.capacidade_maxima AS cat_capacidade_maxima, cat.quantidade_camas AS cat_quantidade_camas, cat.preco_base AS cat_preco_base, cat.ativo AS cat_ativo
             FROM tarefa_limpeza t
             JOIN quarto q ON t.quarto_id = q.id
             JOIN categoria_quarto cat ON q.categoria_id = cat.id
@@ -115,9 +116,9 @@ public class TarefaLimpezaRepository {
 
     public List<TarefaLimpeza> findByEstadoNotOrderByCriadaEmDesc(EstadoTarefaLimpeza estado) {
         String sql = """
-            SELECT t.id, t.quarto_id, t.estado, t.criada_em, t.concluida_em, t.observacoes, t.versao,
-                   q.id, q.numero, q.andar, q.capacidade_operacional, q.estado, q.observacoes, q.ativo, q.versao,
-                   cat.id, cat.nome, cat.descricao, cat.capacidade_maxima, cat.quantidade_camas, cat.preco_base, cat.ativo
+            SELECT t.id AS t_id, t.quarto_id AS t_quarto_id, t.estado AS t_estado, t.criada_em AS t_criada_em, t.concluida_em AS t_concluida_em, t.observacoes AS t_observacoes, t.versao AS t_versao,
+                   q.id AS q_id, q.numero AS q_numero, q.andar AS q_andar, q.capacidade_operacional AS q_capacidade_operacional, q.estado AS q_estado, q.observacoes AS q_observacoes, q.ativo AS q_ativo, q.versao AS q_versao,
+                   cat.id AS cat_id, cat.nome AS cat_nome, cat.descricao AS cat_descricao, cat.capacidade_maxima AS cat_capacidade_maxima, cat.quantidade_camas AS cat_quantidade_camas, cat.preco_base AS cat_preco_base, cat.ativo AS cat_ativo
             FROM tarefa_limpeza t
             JOIN quarto q ON t.quarto_id = q.id
             JOIN categoria_quarto cat ON q.categoria_id = cat.id
@@ -146,7 +147,7 @@ public class TarefaLimpezaRepository {
         } else {
             String sql = """
                 UPDATE tarefa_limpeza
-                SET estado = ?, concluida_em = ?, observacoes = ?
+                SET estado = ?, concluida_em = ?, observacoes = ?, versao = versao + 1
                 WHERE id = ? AND versao = ?
                 """;
             int rows = jdbcTemplate.update(sql,

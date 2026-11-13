@@ -31,35 +31,35 @@ public class OrdemManutencaoRepository {
         @Override
         public OrdemManutencao mapRow(ResultSet rs, int rowNum) throws SQLException {
             OrdemManutencao o = new OrdemManutencao();
-            o.setId(rs.getLong("o.id"));
-            o.setTitulo(rs.getString("o.titulo"));
-            o.setDescricao(rs.getString("o.descricao"));
-            o.setPrioridade(com.gabrielflorencco.hotel_impact.enums.PrioridadeManutencao.valueOf(rs.getString("o.prioridade")));
-            o.setEstado(EstadoManutencao.valueOf(rs.getString("o.estado")));
-            o.setAbertaEm(rs.getTimestamp("o.aberta_em") != null ? rs.getTimestamp("o.aberta_em").toLocalDateTime() : null);
-            o.setConcluidaEm(rs.getTimestamp("o.concluida_em") != null ? rs.getTimestamp("o.concluida_em").toLocalDateTime() : null);
-            o.setInterditouQuarto(rs.getBoolean("o.interditou_quarto"));
-            o.setObservacoes(rs.getString("o.observacoes"));
-            o.setVersao(rs.getLong("o.versao"));
+            o.setId(rs.getLong("o_id"));
+            o.setTitulo(rs.getString("o_titulo"));
+            o.setDescricao(rs.getString("o_descricao"));
+            o.setPrioridade(com.gabrielflorencco.hotel_impact.enums.PrioridadeManutencao.valueOf(rs.getString("o_prioridade")));
+            o.setEstado(EstadoManutencao.valueOf(rs.getString("o_estado")));
+            o.setAbertaEm(rs.getTimestamp("o_aberta_em") != null ? rs.getTimestamp("o_aberta_em").toLocalDateTime() : null);
+            o.setConcluidaEm(rs.getTimestamp("o_concluida_em") != null ? rs.getTimestamp("o_concluida_em").toLocalDateTime() : null);
+            o.setInterditouQuarto(rs.getBoolean("o_interditou_quarto"));
+            o.setObservacoes(rs.getString("o_observacoes"));
+            o.setVersao(rs.getLong("o_versao"));
 
             com.gabrielflorencco.hotel_impact.model.Quarto q = new com.gabrielflorencco.hotel_impact.model.Quarto();
-            q.setId(rs.getLong("q.id"));
-            q.setNumero(rs.getString("q.numero"));
-            q.setAndar(rs.getInt("q.andar"));
-            q.setCapacidadeOperacional(rs.getObject("q.capacidade_operacional") != null ? rs.getInt("q.capacidade_operacional") : null);
-            q.setEstado(com.gabrielflorencco.hotel_impact.enums.EstadoQuarto.valueOf(rs.getString("q.estado")));
-            q.setObservacoes(rs.getString("q.observacoes"));
-            q.setAtivo(rs.getBoolean("q.ativo"));
-            q.setVersao(rs.getLong("q.versao"));
+            q.setId(rs.getLong("q_id"));
+            q.setNumero(rs.getString("q_numero"));
+            q.setAndar(rs.getInt("q_andar"));
+            q.setCapacidadeOperacional(rs.getObject("q_capacidade_operacional") != null ? rs.getInt("q_capacidade_operacional") : null);
+            q.setEstado(com.gabrielflorencco.hotel_impact.enums.EstadoQuarto.valueOf(rs.getString("q_estado")));
+            q.setObservacoes(rs.getString("q_observacoes"));
+            q.setAtivo(rs.getBoolean("q_ativo"));
+            q.setVersao(rs.getLong("q_versao"));
 
             com.gabrielflorencco.hotel_impact.model.CategoriaQuarto cat = new com.gabrielflorencco.hotel_impact.model.CategoriaQuarto();
-            cat.setId(rs.getLong("cat.id"));
-            cat.setNome(rs.getString("cat.nome"));
-            cat.setDescricao(rs.getString("cat.descricao"));
-            cat.setCapacidadeMaxima(rs.getInt("cat.capacidade_maxima"));
-            cat.setQuantidadeCamas(rs.getInt("cat.quantidade_camas"));
-            cat.setPrecoBase(rs.getBigDecimal("cat.preco_base"));
-            cat.setAtivo(rs.getBoolean("cat.ativo"));
+            cat.setId(rs.getLong("cat_id"));
+            cat.setNome(rs.getString("cat_nome"));
+            cat.setDescricao(rs.getString("cat_descricao"));
+            cat.setCapacidadeMaxima(rs.getInt("cat_capacidade_maxima"));
+            cat.setQuantidadeCamas(rs.getInt("cat_quantidade_camas"));
+            cat.setPrecoBase(rs.getBigDecimal("cat_preco_base"));
+            cat.setAtivo(rs.getBoolean("cat_ativo"));
             q.setCategoria(cat);
 
             o.setQuarto(q);
@@ -70,9 +70,9 @@ public class OrdemManutencaoRepository {
 
     public Optional<OrdemManutencao> findByIdComQuarto(Long id) {
         String sql = """
-            SELECT o.id, o.quarto_id, o.titulo, o.descricao, o.prioridade, o.estado, o.aberta_em, o.concluida_em, o.interditou_quarto, o.observacoes, o.versao,
-                   q.id, q.numero, q.andar, q.capacidade_operacional, q.estado, q.observacoes, q.ativo, q.versao,
-                   cat.id, cat.nome, cat.descricao, cat.capacidade_maxima, cat.quantidade_camas, cat.preco_base, cat.ativo
+            SELECT o.id AS o_id, o.quarto_id, o.titulo AS o_titulo, o.descricao AS o_descricao, o.prioridade AS o_prioridade, o.estado AS o_estado, o.aberta_em AS o_aberta_em, o.concluida_em AS o_concluida_em, o.interditou_quarto AS o_interditou_quarto, o.observacoes AS o_observacoes, o.versao AS o_versao,
+                   q.id AS q_id, q.numero AS q_numero, q.andar AS q_andar, q.capacidade_operacional AS q_capacidade_operacional, q.estado AS q_estado, q.observacoes AS q_observacoes, q.ativo AS q_ativo, q.versao AS q_versao,
+                   cat.id AS cat_id, cat.nome AS cat_nome, cat.descricao AS cat_descricao, cat.capacidade_maxima AS cat_capacidade_maxima, cat.quantidade_camas AS cat_quantidade_camas, cat.preco_base AS cat_preco_base, cat.ativo AS cat_ativo
             FROM ordem_manutencao o
             JOIN quarto q ON o.quarto_id = q.id
             JOIN categoria_quarto cat ON q.categoria_id = cat.id
@@ -83,7 +83,8 @@ public class OrdemManutencaoRepository {
 
     public boolean existsByQuartoId(Long quartoId) {
         String sql = "SELECT 1 FROM ordem_manutencao WHERE quarto_id = ?";
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, quartoId));
+        List<Boolean> result = jdbcTemplate.query(sql, (rs, rowNum) -> true, quartoId);
+        return !result.isEmpty();
     }
 
     public boolean existsByQuartoIdAndEstadoIn(Long quartoId, List<EstadoManutencao> estados) {
@@ -92,14 +93,15 @@ public class OrdemManutencaoRepository {
         List<Object> params = new java.util.ArrayList<>();
         params.add(quartoId);
         params.addAll(estados.stream().map(Enum::name).toList());
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, params.toArray()));
+        List<Boolean> result = jdbcTemplate.query(sql, (rs, rowNum) -> true, params.toArray());
+        return !result.isEmpty();
     }
 
-    public List<OrdemManutencao> findByEstadoOrderByAbertaEmDesc(EstadoManutencao estado) {
+    public List<com.gabrielflorencco.hotel_impact.model.OrdemManutencao> findByEstadoOrderByAbertaEmDesc(EstadoManutencao estado) {
         String sql = """
-            SELECT o.id, o.quarto_id, o.titulo, o.descricao, o.prioridade, o.estado, o.aberta_em, o.concluida_em, o.interditou_quarto, o.observacoes, o.versao,
-                   q.id, q.numero, q.andar, q.capacidade_operacional, q.estado, q.observacoes, q.ativo, q.versao,
-                   cat.id, cat.nome, cat.descricao, cat.capacidade_maxima, cat.quantidade_camas, cat.preco_base, cat.ativo
+            SELECT o.id AS o_id, o.quarto_id, o.titulo AS o_titulo, o.descricao AS o_descricao, o.prioridade AS o_prioridade, o.estado AS o_estado, o.aberta_em AS o_aberta_em, o.concluida_em AS o_concluida_em, o.interditou_quarto AS o_interditou_quarto, o.observacoes AS o_observacoes, o.versao AS o_versao,
+                   q.id AS q_id, q.numero AS q_numero, q.andar AS q_andar, q.capacidade_operacional AS q_capacidade_operacional, q.estado AS q_estado, q.observacoes AS q_observacoes, q.ativo AS q_ativo, q.versao AS q_versao,
+                   cat.id AS cat_id, cat.nome AS cat_nome, cat.descricao AS cat_descricao, cat.capacidade_maxima AS cat_capacidade_maxima, cat.quantidade_camas AS cat_quantidade_camas, cat.preco_base AS cat_preco_base, cat.ativo AS cat_ativo
             FROM ordem_manutencao o
             JOIN quarto q ON o.quarto_id = q.id
             JOIN categoria_quarto cat ON q.categoria_id = cat.id
@@ -109,11 +111,11 @@ public class OrdemManutencaoRepository {
         return jdbcTemplate.query(sql, MAPPER, estado.name());
     }
 
-    public List<OrdemManutencao> findByQuartoIdOrderByAbertaEmDesc(Long quartoId) {
+    public List<com.gabrielflorencco.hotel_impact.model.OrdemManutencao> findByQuartoIdOrderByAbertaEmDesc(Long quartoId) {
         String sql = """
-            SELECT o.id, o.quarto_id, o.titulo, o.descricao, o.prioridade, o.estado, o.aberta_em, o.concluida_em, o.interditou_quarto, o.observacoes, o.versao,
-                   q.id, q.numero, q.andar, q.capacidade_operacional, q.estado, q.observacoes, q.ativo, q.versao,
-                   cat.id, cat.nome, cat.descricao, cat.capacidade_maxima, cat.quantidade_camas, cat.preco_base, cat.ativo
+            SELECT o.id AS o_id, o.quarto_id, o.titulo AS o_titulo, o.descricao AS o_descricao, o.prioridade AS o_prioridade, o.estado AS o_estado, o.aberta_em AS o_aberta_em, o.concluida_em AS o_concluida_em, o.interditou_quarto AS o_interditou_quarto, o.observacoes AS o_observacoes, o.versao AS o_versao,
+                   q.id AS q_id, q.numero AS q_numero, q.andar AS q_andar, q.capacidade_operacional AS q_capacidade_operacional, q.estado AS q_estado, q.observacoes AS q_observacoes, q.ativo AS q_ativo, q.versao AS q_versao,
+                   cat.id AS cat_id, cat.nome AS cat_nome, cat.descricao AS cat_descricao, cat.capacidade_maxima AS cat_capacidade_maxima, cat.quantidade_camas AS cat_quantidade_camas, cat.preco_base AS cat_preco_base, cat.ativo AS cat_ativo
             FROM ordem_manutencao o
             JOIN quarto q ON o.quarto_id = q.id
             JOIN categoria_quarto cat ON q.categoria_id = cat.id
@@ -123,11 +125,11 @@ public class OrdemManutencaoRepository {
         return jdbcTemplate.query(sql, MAPPER, quartoId);
     }
 
-    public List<OrdemManutencao> findByEstadoIn(List<EstadoManutencao> estados) {
+    public List<com.gabrielflorencco.hotel_impact.model.OrdemManutencao> findByEstadoIn(List<EstadoManutencao> estados) {
         String placeholders = estados.stream().map(e -> "?").collect(java.util.stream.Collectors.joining(","));
-        String sql = "SELECT o.id, o.quarto_id, o.titulo, o.descricao, o.prioridade, o.estado, o.aberta_em, o.concluida_em, o.interditou_quarto, o.observacoes, o.versao, " +
-                "q.id, q.numero, q.andar, q.capacidade_operacional, q.estado, q.observacoes, q.ativo, q.versao, " +
-                "cat.id, cat.nome, cat.descricao, cat.capacidade_maxima, cat.quantidade_camas, cat.preco_base, cat.ativo " +
+        String sql = "SELECT o.id AS o_id, o.quarto_id, o.titulo AS o_titulo, o.descricao AS o_descricao, o.prioridade AS o_prioridade, o.estado AS o_estado, o.aberta_em AS o_aberta_em, o.concluida_em AS o_concluida_em, o.interditou_quarto AS o_interditou_quarto, o.observacoes AS o_observacoes, o.versao AS o_versao, " +
+                "q.id AS q_id, q.numero AS q_numero, q.andar AS q_andar, q.capacidade_operacional AS q_capacidade_operacional, q.estado AS q_estado, q.observacoes AS q_observacoes, q.ativo AS q_ativo, q.versao AS q_versao, " +
+                "cat.id AS cat_id, cat.nome AS cat_nome, cat.descricao AS cat_descricao, cat.capacidade_maxima AS cat_capacidade_maxima, cat.quantidade_camas AS cat_quantidade_camas, cat.preco_base AS cat_preco_base, cat.ativo AS cat_ativo " +
                 "FROM ordem_manutencao o " +
                 "JOIN quarto q ON o.quarto_id = q.id " +
                 "JOIN categoria_quarto cat ON q.categoria_id = cat.id " +
@@ -140,20 +142,20 @@ public class OrdemManutencaoRepository {
         return jdbcTemplate.query(sql, MAPPER, params.toArray());
     }
 
-    public Page<OrdemManutencao> buscarTodos(Pageable pageable) {
+    public Page<com.gabrielflorencco.hotel_impact.model.OrdemManutencao> buscarTodos(Pageable pageable) {
         String sql = baseQuery() + " ORDER BY o.aberta_em DESC, o.id DESC";
         long total = countAll();
-        List<OrdemManutencao> content = jdbcTemplate.query(
+        List<com.gabrielflorencco.hotel_impact.model.OrdemManutencao> content = jdbcTemplate.query(
                 addPagination(sql, pageable),
                 MAPPER
         );
         return new PageImpl<>(content, pageable, total);
     }
 
-    public Page<OrdemManutencao> buscarPorEstado(EstadoManutencao estado, Pageable pageable) {
+    public Page<com.gabrielflorencco.hotel_impact.model.OrdemManutencao> buscarPorEstado(EstadoManutencao estado, Pageable pageable) {
         String sql = baseQuery() + " WHERE o.estado = ? ORDER BY o.aberta_em DESC, o.id DESC";
         long total = countByEstado(estado);
-        List<OrdemManutencao> content = jdbcTemplate.query(
+        List<com.gabrielflorencco.hotel_impact.model.OrdemManutencao> content = jdbcTemplate.query(
                 addPagination(sql, pageable),
                 MAPPER,
                 estado.name()
@@ -161,7 +163,7 @@ public class OrdemManutencaoRepository {
         return new PageImpl<>(content, pageable, total);
     }
 
-    public OrdemManutencao save(OrdemManutencao ordem) {
+    public com.gabrielflorencco.hotel_impact.model.OrdemManutencao save(com.gabrielflorencco.hotel_impact.model.OrdemManutencao ordem) {
         if (ordem.getId() == null) {
             String sql = """
                 INSERT INTO ordem_manutencao (quarto_id, titulo, descricao, prioridade, estado, aberta_em, concluida_em, interditou_quarto, observacoes)
@@ -177,7 +179,7 @@ public class OrdemManutencaoRepository {
         } else {
             String sql = """
                 UPDATE ordem_manutencao
-                SET titulo = ?, descricao = ?, prioridade = ?, estado = ?, aberta_em = ?, concluida_em = ?, interditou_quarto = ?, observacoes = ?
+                SET titulo = ?, descricao = ?, prioridade = ?, estado = ?, aberta_em = ?, concluida_em = ?, interditou_quarto = ?, observacoes = ?, versao = versao + 1
                 WHERE id = ? AND versao = ?
                 """;
             int rows = jdbcTemplate.update(sql,
@@ -195,9 +197,9 @@ public class OrdemManutencaoRepository {
 
     private String baseQuery() {
         return """
-            SELECT o.id, o.quarto_id, o.titulo, o.descricao, o.prioridade, o.estado, o.aberta_em, o.concluida_em, o.interditou_quarto, o.observacoes, o.versao,
-                   q.id, q.numero, q.andar, q.capacidade_operacional, q.estado, q.observacoes, q.ativo, q.versao,
-                   cat.id, cat.nome, cat.descricao, cat.capacidade_maxima, cat.quantidade_camas, cat.preco_base, cat.ativo
+            SELECT o.id AS o_id, o.quarto_id, o.titulo AS o_titulo, o.descricao AS o_descricao, o.prioridade AS o_prioridade, o.estado AS o_estado, o.aberta_em AS o_aberta_em, o.concluida_em AS o_concluida_em, o.interditou_quarto AS o_interditou_quarto, o.observacoes AS o_observacoes, o.versao AS o_versao,
+                   q.id AS q_id, q.numero AS q_numero, q.andar AS q_andar, q.capacidade_operacional AS q_capacidade_operacional, q.estado AS q_estado, q.observacoes AS q_observacoes, q.ativo AS q_ativo, q.versao AS q_versao,
+                   cat.id AS cat_id, cat.nome AS cat_nome, cat.descricao AS cat_descricao, cat.capacidade_maxima AS cat_capacidade_maxima, cat.quantidade_camas AS cat_quantidade_camas, cat.preco_base AS cat_preco_base, cat.ativo AS cat_ativo
             FROM ordem_manutencao o
             JOIN quarto q ON o.quarto_id = q.id
             JOIN categoria_quarto cat ON q.categoria_id = cat.id

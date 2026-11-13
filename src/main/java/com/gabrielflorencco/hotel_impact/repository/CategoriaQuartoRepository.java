@@ -67,12 +67,14 @@ public class CategoriaQuartoRepository {
 
     public boolean existsByNomeIgnoreCase(String nome) {
         String sql = "SELECT 1 FROM categoria_quarto WHERE LOWER(nome) = LOWER(?)";
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, nome));
+        List<Boolean> result = jdbcTemplate.query(sql, (rs, rowNum) -> true, nome);
+        return !result.isEmpty();
     }
 
     public boolean existsByNomeIgnoreCaseAndIdNot(String nome, Long id) {
         String sql = "SELECT 1 FROM categoria_quarto WHERE LOWER(nome) = LOWER(?) AND id <> ?";
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, nome, id));
+        List<Boolean> result = jdbcTemplate.query(sql, (rs, rowNum) -> true, nome, id);
+        return !result.isEmpty();
     }
 
     public CategoriaQuarto save(CategoriaQuarto categoria) {

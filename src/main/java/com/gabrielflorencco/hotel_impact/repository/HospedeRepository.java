@@ -62,12 +62,14 @@ public class HospedeRepository {
 
     public boolean existsByCpf(String cpf) {
         String sql = "SELECT 1 FROM hospede WHERE cpf = ?";
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, cpf));
+        List<Boolean> result = jdbcTemplate.query(sql, (rs, rowNum) -> true, cpf);
+        return !result.isEmpty();
     }
 
     public boolean existsByCpfAndIdNot(String cpf, Long id) {
         String sql = "SELECT 1 FROM hospede WHERE cpf = ? AND id <> ?";
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, cpf, id));
+        List<Boolean> result = jdbcTemplate.query(sql, (rs, rowNum) -> true, cpf, id);
+        return !result.isEmpty();
     }
 
     public Page<Hospede> buscar(String termo, String termoCpf, Pageable pageable) {

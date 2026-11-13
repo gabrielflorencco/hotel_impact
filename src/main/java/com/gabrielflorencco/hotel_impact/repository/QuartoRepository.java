@@ -27,23 +27,23 @@ public class QuartoRepository {
         @Override
         public Quarto mapRow(ResultSet rs, int rowNum) throws SQLException {
             Quarto q = new Quarto();
-            q.setId(rs.getLong("q.id"));
-            q.setNumero(rs.getString("q.numero"));
-            q.setAndar(rs.getInt("q.andar"));
-            q.setCapacidadeOperacional(rs.getObject("q.capacidade_operacional") != null ? rs.getInt("q.capacidade_operacional") : null);
-            q.setEstado(EstadoQuarto.valueOf(rs.getString("q.estado")));
-            q.setObservacoes(rs.getString("q.observacoes"));
-            q.setAtivo(rs.getBoolean("q.ativo"));
-            q.setVersao(rs.getLong("q.versao"));
+            q.setId(rs.getLong("q_id"));
+            q.setNumero(rs.getString("q_numero"));
+            q.setAndar(rs.getInt("q_andar"));
+            q.setCapacidadeOperacional(rs.getObject("q_capacidade_operacional") != null ? rs.getInt("q_capacidade_operacional") : null);
+            q.setEstado(EstadoQuarto.valueOf(rs.getString("q_estado")));
+            q.setObservacoes(rs.getString("q_observacoes"));
+            q.setAtivo(rs.getBoolean("q_ativo"));
+            q.setVersao(rs.getLong("q_versao"));
 
             com.gabrielflorencco.hotel_impact.model.CategoriaQuarto cat = new com.gabrielflorencco.hotel_impact.model.CategoriaQuarto();
-            cat.setId(rs.getLong("c.id"));
-            cat.setNome(rs.getString("c.nome"));
-            cat.setDescricao(rs.getString("c.descricao"));
-            cat.setCapacidadeMaxima(rs.getInt("c.capacidade_maxima"));
-            cat.setQuantidadeCamas(rs.getInt("c.quantidade_camas"));
-            cat.setPrecoBase(rs.getBigDecimal("c.preco_base"));
-            cat.setAtivo(rs.getBoolean("c.ativo"));
+            cat.setId(rs.getLong("c_id"));
+            cat.setNome(rs.getString("c_nome"));
+            cat.setDescricao(rs.getString("c_descricao"));
+            cat.setCapacidadeMaxima(rs.getInt("c_capacidade_maxima"));
+            cat.setQuantidadeCamas(rs.getInt("c_quantidade_camas"));
+            cat.setPrecoBase(rs.getBigDecimal("c_preco_base"));
+            cat.setAtivo(rs.getBoolean("c_ativo"));
             q.setCategoria(cat);
 
             return q;
@@ -52,8 +52,10 @@ public class QuartoRepository {
 
     public List<Quarto> buscar(String numero, EstadoQuarto estado, Long categoriaId) {
         StringBuilder sql = new StringBuilder("""
-            SELECT q.id, q.numero, q.andar, q.capacidade_operacional, q.estado, q.observacoes, q.ativo, q.versao,
-                   c.id, c.nome, c.descricao, c.capacidade_maxima, c.quantidade_camas, c.preco_base, c.ativo
+            SELECT q.id AS q_id, q.numero AS q_numero, q.andar AS q_andar, q.capacidade_operacional AS q_capacidade_operacional,
+                   q.estado AS q_estado, q.observacoes AS q_observacoes, q.ativo AS q_ativo, q.versao AS q_versao,
+                   c.id AS c_id, c.nome AS c_nome, c.descricao AS c_descricao, c.capacidade_maxima AS c_capacidade_maxima,
+                   c.quantidade_camas AS c_quantidade_camas, c.preco_base AS c_preco_base, c.ativo AS c_ativo
             FROM quarto q
             JOIN categoria_quarto c ON q.categoria_id = c.id
             WHERE 1=1
@@ -80,8 +82,10 @@ public class QuartoRepository {
 
     public List<Quarto> findAllComCategoria() {
         String sql = """
-            SELECT q.id, q.numero, q.andar, q.capacidade_operacional, q.estado, q.observacoes, q.ativo, q.versao,
-                   c.id, c.nome, c.descricao, c.capacidade_maxima, c.quantidade_camas, c.preco_base, c.ativo
+            SELECT q.id AS q_id, q.numero AS q_numero, q.andar AS q_andar, q.capacidade_operacional AS q_capacidade_operacional,
+                   q.estado AS q_estado, q.observacoes AS q_observacoes, q.ativo AS q_ativo, q.versao AS q_versao,
+                   c.id AS c_id, c.nome AS c_nome, c.descricao AS c_descricao, c.capacidade_maxima AS c_capacidade_maxima,
+                   c.quantidade_camas AS c_quantidade_camas, c.preco_base AS c_preco_base, c.ativo AS c_ativo
             FROM quarto q
             JOIN categoria_quarto c ON q.categoria_id = c.id
             ORDER BY q.numero
@@ -91,8 +95,10 @@ public class QuartoRepository {
 
     public Optional<Quarto> findByIdComCategoria(Long id) {
         String sql = """
-            SELECT q.id, q.numero, q.andar, q.capacidade_operacional, q.estado, q.observacoes, q.ativo, q.versao,
-                   c.id, c.nome, c.descricao, c.capacidade_maxima, c.quantidade_camas, c.preco_base, c.ativo
+            SELECT q.id AS q_id, q.numero AS q_numero, q.andar AS q_andar, q.capacidade_operacional AS q_capacidade_operacional,
+                   q.estado AS q_estado, q.observacoes AS q_observacoes, q.ativo AS q_ativo, q.versao AS q_versao,
+                   c.id AS c_id, c.nome AS c_nome, c.descricao AS c_descricao, c.capacidade_maxima AS c_capacidade_maxima,
+                   c.quantidade_camas AS c_quantidade_camas, c.preco_base AS c_preco_base, c.ativo AS c_ativo
             FROM quarto q
             JOIN categoria_quarto c ON q.categoria_id = c.id
             WHERE q.id = ?
@@ -102,8 +108,10 @@ public class QuartoRepository {
 
     public List<Quarto> findAllByAtivoTrueOrderByNumeroAsc() {
         String sql = """
-            SELECT q.id, q.numero, q.andar, q.capacidade_operacional, q.estado, q.observacoes, q.ativo, q.versao,
-                   c.id, c.nome, c.descricao, c.capacidade_maxima, c.quantidade_camas, c.preco_base, c.ativo
+            SELECT q.id AS q_id, q.numero AS q_numero, q.andar AS q_andar, q.capacidade_operacional AS q_capacidade_operacional,
+                   q.estado AS q_estado, q.observacoes AS q_observacoes, q.ativo AS q_ativo, q.versao AS q_versao,
+                   c.id AS c_id, c.nome AS c_nome, c.descricao AS c_descricao, c.capacidade_maxima AS c_capacidade_maxima,
+                   c.quantidade_camas AS c_quantidade_camas, c.preco_base AS c_preco_base, c.ativo AS c_ativo
             FROM quarto q
             JOIN categoria_quarto c ON q.categoria_id = c.id
             WHERE q.ativo = true
@@ -114,8 +122,10 @@ public class QuartoRepository {
 
     public List<Quarto> findReservaveis() {
         String sql = """
-            SELECT q.id, q.numero, q.andar, q.capacidade_operacional, q.estado, q.observacoes, q.ativo, q.versao,
-                   c.id, c.nome, c.descricao, c.capacidade_maxima, c.quantidade_camas, c.preco_base, c.ativo
+            SELECT q.id AS q_id, q.numero AS q_numero, q.andar AS q_andar, q.capacidade_operacional AS q_capacidade_operacional,
+                   q.estado AS q_estado, q.observacoes AS q_observacoes, q.ativo AS q_ativo, q.versao AS q_versao,
+                   c.id AS c_id, c.nome AS c_nome, c.descricao AS c_descricao, c.capacidade_maxima AS c_capacidade_maxima,
+                   c.quantidade_camas AS c_quantidade_camas, c.preco_base AS c_preco_base, c.ativo AS c_ativo
             FROM quarto q
             JOIN categoria_quarto c ON q.categoria_id = c.id
             WHERE q.ativo = true
@@ -127,8 +137,10 @@ public class QuartoRepository {
 
     public Optional<Quarto> findByNumero(String numero) {
         String sql = """
-            SELECT q.id, q.numero, q.andar, q.capacidade_operacional, q.estado, q.observacoes, q.ativo, q.versao,
-                   c.id, c.nome, c.descricao, c.capacidade_maxima, c.quantidade_camas, c.preco_base, c.ativo
+            SELECT q.id AS q_id, q.numero AS q_numero, q.andar AS q_andar, q.capacidade_operacional AS q_capacidade_operacional,
+                   q.estado AS q_estado, q.observacoes AS q_observacoes, q.ativo AS q_ativo, q.versao AS q_versao,
+                   c.id AS c_id, c.nome AS c_nome, c.descricao AS c_descricao, c.capacidade_maxima AS c_capacidade_maxima,
+                   c.quantidade_camas AS c_quantidade_camas, c.preco_base AS c_preco_base, c.ativo AS c_ativo
             FROM quarto q
             JOIN categoria_quarto c ON q.categoria_id = c.id
             WHERE q.numero = ?
@@ -138,12 +150,14 @@ public class QuartoRepository {
 
     public boolean existsByNumero(String numero) {
         String sql = "SELECT 1 FROM quarto WHERE numero = ?";
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, numero));
+        List<Boolean> result = jdbcTemplate.query(sql, (rs, rowNum) -> true, numero);
+        return !result.isEmpty();
     }
 
     public boolean existsByNumeroAndIdNot(String numero, Long id) {
         String sql = "SELECT 1 FROM quarto WHERE numero = ? AND id <> ?";
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, numero, id));
+        List<Boolean> result = jdbcTemplate.query(sql, (rs, rowNum) -> true, numero, id);
+        return !result.isEmpty();
     }
 
     public long countByCategoriaId(Long categoriaId) {

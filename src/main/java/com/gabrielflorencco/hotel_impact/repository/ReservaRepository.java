@@ -33,51 +33,52 @@ public class ReservaRepository {
         @Override
         public Reserva mapRow(ResultSet rs, int rowNum) throws SQLException {
             Reserva r = new Reserva();
-            r.setId(rs.getLong("r.id"));
-            r.setCodigo(rs.getString("r.codigo"));
-            r.setDataCheckIn(rs.getDate("r.data_check_in").toLocalDate());
-            r.setDataCheckOut(rs.getDate("r.data_check_out").toLocalDate());
-            r.setQuantidadeHospedes(rs.getInt("r.quantidade_hospedes"));
-            r.setValorDiaria(rs.getBigDecimal("r.valor_diaria"));
-            r.setDesconto(rs.getBigDecimal("r.desconto"));
-            r.setValorTotal(rs.getBigDecimal("r.valor_total"));
-            r.setEstado(EstadoReserva.valueOf(rs.getString("r.estado")));
-            r.setMotivoExcecao(rs.getString("r.motivo_excecao"));
-            r.setObservacoes(rs.getString("r.observacoes"));
-            r.setDataCriacao(rs.getTimestamp("r.data_criacao") != null ? rs.getTimestamp("r.data_criacao").toLocalDateTime() : null);
-            r.setVersao(rs.getLong("r.versao"));
+            r.setId(rs.getLong("r_id"));
+            r.setCodigo(rs.getString("r_codigo"));
+            r.setDataCheckIn(rs.getDate("r_data_check_in").toLocalDate());
+            r.setDataCheckOut(rs.getDate("r_data_check_out").toLocalDate());
+            r.setQuantidadeHospedes(rs.getInt("r_quantidade_hospedes"));
+            r.setValorDiaria(rs.getBigDecimal("r_valor_diaria"));
+            r.setDesconto(rs.getBigDecimal("r_desconto"));
+            r.setValorTotal(rs.getBigDecimal("r_valor_total"));
+            r.setEstado(EstadoReserva.valueOf(rs.getString("r_estado")));
+            r.setMotivoExcecao(rs.getString("r_motivo_excecao"));
+            r.setObservacoes(rs.getString("r_observacoes"));
+            r.setDataCriacao(rs.getTimestamp("r_data_criacao") != null ? rs.getTimestamp("r_data_criacao").toLocalDateTime() : null);
+            r.setVersao(rs.getLong("r_versao"));
 
             com.gabrielflorencco.hotel_impact.model.Hospede h = new com.gabrielflorencco.hotel_impact.model.Hospede();
-            h.setId(rs.getLong("h.id"));
-            h.setNome(rs.getString("h.nome"));
-            h.setCpf(rs.getString("h.cpf"));
-            h.setTelefone(rs.getString("h.telefone"));
-            h.setEmail(rs.getString("h.email"));
-            h.setDataNascimento(rs.getDate("h.data_nascimento") != null ? rs.getDate("h.data_nascimento").toLocalDate() : null);
-            h.setObservacoes(rs.getString("h.observacoes"));
-            h.setDataCadastro(rs.getTimestamp("h.data_cadastro") != null ? rs.getTimestamp("h.data_cadastro").toLocalDateTime() : null);
+            h.setId(rs.getLong("hsp_id"));
+            h.setNome(rs.getString("hsp_nome"));
+            h.setCpf(rs.getString("hsp_cpf"));
+            h.setTelefone(rs.getString("hsp_telefone"));
+            h.setEmail(rs.getString("hsp_email"));
+            h.setDataNascimento(rs.getDate("hsp_data_nascimento") != null ? rs.getDate("hsp_data_nascimento").toLocalDate() : null);
+            h.setObservacoes(rs.getString("hsp_observacoes"));
+            h.setDataCadastro(rs.getTimestamp("hsp_data_cadastro") != null ? rs.getTimestamp("hsp_data_cadastro").toLocalDateTime() : null);
             r.setHospede(h);
 
             com.gabrielflorencco.hotel_impact.model.Quarto q = new com.gabrielflorencco.hotel_impact.model.Quarto();
-            q.setId(rs.getLong("q.id"));
-            q.setNumero(rs.getString("q.numero"));
-            q.setAndar(rs.getInt("q.andar"));
-            q.setCapacidadeOperacional(rs.getObject("q.capacidade_operacional") != null ? rs.getInt("q.capacidade_operacional") : null);
-            q.setEstado(com.gabrielflorencco.hotel_impact.enums.EstadoQuarto.valueOf(rs.getString("q.estado")));
-            q.setObservacoes(rs.getString("q.observacoes"));
-            q.setAtivo(rs.getBoolean("q.ativo"));
-            q.setVersao(rs.getLong("q.versao"));
+            q.setId(rs.getLong("q_id"));
+            q.setNumero(rs.getString("q_numero"));
+            q.setAndar(rs.getInt("q_andar"));
+            q.setCapacidadeOperacional(rs.getObject("q_capacidade_operacional") != null ? rs.getInt("q_capacidade_operacional") : null);
+            q.setEstado(com.gabrielflorencco.hotel_impact.enums.EstadoQuarto.valueOf(rs.getString("q_estado")));
+            q.setObservacoes(rs.getString("q_observacoes"));
+            q.setAtivo(rs.getBoolean("q_ativo"));
+            q.setVersao(rs.getLong("q_versao"));
 
             com.gabrielflorencco.hotel_impact.model.CategoriaQuarto c = new com.gabrielflorencco.hotel_impact.model.CategoriaQuarto();
-            c.setId(rs.getLong("cat.id"));
-            c.setNome(rs.getString("cat.nome"));
-            c.setDescricao(rs.getString("cat.descricao"));
-            c.setCapacidadeMaxima(rs.getInt("cat.capacidade_maxima"));
-            c.setQuantidadeCamas(rs.getInt("cat.quantidade_camas"));
-            c.setPrecoBase(rs.getBigDecimal("cat.preco_base"));
-            c.setAtivo(rs.getBoolean("cat.ativo"));
+            c.setId(rs.getLong("cat_id"));
+            c.setNome(rs.getString("cat_nome"));
+            c.setDescricao(rs.getString("cat_descricao"));
+            c.setCapacidadeMaxima(rs.getInt("cat_capacidade_maxima"));
+            c.setQuantidadeCamas(rs.getInt("cat_quantidade_camas"));
+            c.setPrecoBase(rs.getBigDecimal("cat_preco_base"));
+            c.setAtivo(rs.getBoolean("cat_ativo"));
             q.setCategoria(c);
 
+            r.setHospede(h);
             r.setQuarto(q);
 
             return r;
@@ -116,32 +117,33 @@ public class ReservaRepository {
     }
 
     public Optional<Reserva> findByCodigo(String codigo) {
-        String sql = "SELECT id, codigo, hospede_id, quarto_id, data_check_in, data_check_out, " +
-                "quantidade_hospedes, valor_diaria, desconto, valor_total, data_criacao, estado, " +
-                "motivo_excecao, observacoes, versao FROM reserva WHERE codigo = ?";
+        String sql = baseQuery() + " WHERE r.codigo = ?";
         return jdbcTemplate.query(sql, MAPPER, codigo).stream().findFirst();
     }
 
     public boolean existsByCodigo(String codigo) {
         String sql = "SELECT 1 FROM reserva WHERE codigo = ?";
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, codigo));
+        List<Boolean> result = jdbcTemplate.query(sql, (rs, rowNum) -> true, codigo);
+        return !result.isEmpty();
     }
 
     public boolean existsByQuartoId(Long quartoId) {
         String sql = "SELECT 1 FROM reserva WHERE quarto_id = ?";
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, quartoId));
+        List<Boolean> result = jdbcTemplate.query(sql, (rs, rowNum) -> true, quartoId);
+        return !result.isEmpty();
     }
 
     public boolean existsByHospedeId(Long hospedeId) {
         String sql = "SELECT 1 FROM reserva WHERE hospede_id = ?";
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, hospedeId));
+        List<Boolean> result = jdbcTemplate.query(sql, (rs, rowNum) -> true, hospedeId);
+        return !result.isEmpty();
     }
 
     public List<Reserva> findConflitantes(Long quartoId, LocalDate inicio, LocalDate fim, List<EstadoReserva> estadosAtivos) {
         String placeholders = estadosAtivos.stream().map(e -> "?").collect(java.util.stream.Collectors.joining(","));
-        String sql = "SELECT r.id, r.codigo, r.hospede_id, r.quarto_id, r.data_check_in, r.data_check_out, " +
-                "r.quantidade_hospedes, r.valor_diaria, r.desconto, r.valor_total, r.data_criacao, " +
-                "r.estado, r.motivo_excecao, r.observacoes, r.versao " +
+        String sql = "SELECT id AS r_id, codigo AS r_codigo, hospede_id, quarto_id, data_check_in AS r_data_check_in, data_check_out AS r_data_check_out, " +
+                "quantidade_hospedes, valor_diaria, desconto, valor_total, data_criacao, " +
+                "estado, motivo_excecao, observacoes, versao " +
                 "FROM reserva r " +
                 "WHERE r.quarto_id = ? AND r.estado IN (" + placeholders + ") " +
                 "AND r.data_check_in < ? AND r.data_check_out > ?";
@@ -155,9 +157,9 @@ public class ReservaRepository {
 
     public List<Reserva> findConflitantesExceto(Long quartoId, Long reservaId, LocalDate inicio, LocalDate fim, List<EstadoReserva> estadosAtivos) {
         String placeholders = estadosAtivos.stream().map(e -> "?").collect(java.util.stream.Collectors.joining(","));
-        String sql = "SELECT r.id, r.codigo, r.hospede_id, r.quarto_id, r.data_check_in, r.data_check_out, " +
-                "r.quantidade_hospedes, r.valor_diaria, r.desconto, r.valor_total, r.data_criacao, " +
-                "r.estado, r.motivo_excecao, r.observacoes, r.versao " +
+        String sql = "SELECT id AS r_id, codigo AS r_codigo, hospede_id, quarto_id, data_check_in AS r_data_check_in, data_check_out AS r_data_check_out, " +
+                "quantidade_hospedes, valor_diaria, desconto, valor_total, data_criacao, " +
+                "estado, motivo_excecao, observacoes, versao " +
                 "FROM reserva r " +
                 "WHERE r.quarto_id = ? AND r.id <> ? AND r.estado IN (" + placeholders + ") " +
                 "AND r.data_check_in < ? AND r.data_check_out > ?";
@@ -199,7 +201,8 @@ public class ReservaRepository {
     public List<Reserva> buscarAtivasPorDataCheckInComDetalhes(List<EstadoReserva> estados, LocalDate dia) {
         String placeholders = estados.stream().map(e -> "?").collect(java.util.stream.Collectors.joining(","));
         String sql = baseQuery() + " WHERE r.estado IN (" + placeholders + ") AND r.data_check_in = ? ORDER BY r.id DESC";
-        List<Object> params = estados.stream().map(Enum::name).collect(java.util.stream.Collectors.toCollection(java.util.ArrayList::new));
+        List<Object> params = new java.util.ArrayList<>();
+        params.addAll(estados.stream().map(Enum::name).toList());
         params.add(dia);
         return jdbcTemplate.query(sql, MAPPER, params.toArray());
     }
@@ -207,7 +210,8 @@ public class ReservaRepository {
     public List<Reserva> buscarAtivasPorDataCheckOutComDetalhes(List<EstadoReserva> estados, LocalDate dia) {
         String placeholders = estados.stream().map(e -> "?").collect(java.util.stream.Collectors.joining(","));
         String sql = baseQuery() + " WHERE r.estado IN (" + placeholders + ") AND r.data_check_out = ? ORDER BY r.id DESC";
-        List<Object> params = estados.stream().map(Enum::name).collect(java.util.stream.Collectors.toCollection(java.util.ArrayList::new));
+        List<Object> params = new java.util.ArrayList<>();
+        params.addAll(estados.stream().map(Enum::name).toList());
         params.add(dia);
         return jdbcTemplate.query(sql, MAPPER, params.toArray());
     }
@@ -260,12 +264,12 @@ public class ReservaRepository {
 
     private String baseQuery() {
         return """
-            SELECT r.id, r.codigo, r.hospede_id, r.quarto_id, r.data_check_in, r.data_check_out,
-                   r.quantidade_hospedes, r.valor_diaria, r.desconto, r.valor_total, r.data_criacao,
-                   r.estado, r.motivo_excecao, r.observacoes, r.versao,
-                   h.id, h.cpf, h.nome, h.telefone, h.email, h.data_nascimento, h.observacoes, h.data_cadastro,
-                   q.id, q.numero, q.andar, q.capacidade_operacional, q.estado, q.observacoes, q.ativo, q.versao,
-                   cat.id, cat.nome, cat.descricao, cat.capacidade_maxima, cat.quantidade_camas, cat.preco_base, cat.ativo
+            SELECT r.id AS r_id, r.codigo AS r_codigo, r.hospede_id, r.quarto_id, r.data_check_in AS r_data_check_in, r.data_check_out AS r_data_check_out,
+                   r.quantidade_hospedes AS r_quantidade_hospedes, r.valor_diaria AS r_valor_diaria, r.desconto AS r_desconto, r.valor_total AS r_valor_total, r.data_criacao AS r_data_criacao,
+                   r.estado AS r_estado, r.motivo_excecao AS r_motivo_excecao, r.observacoes AS r_observacoes, r.versao AS r_versao,
+                   h.id AS hsp_id, h.cpf AS hsp_cpf, h.nome AS hsp_nome, h.telefone AS hsp_telefone, h.email AS hsp_email, h.data_nascimento AS hsp_data_nascimento, h.observacoes AS hsp_observacoes, h.data_cadastro AS hsp_data_cadastro,
+                   q.id AS q_id, q.numero AS q_numero, q.andar AS q_andar, q.capacidade_operacional AS q_capacidade_operacional, q.estado AS q_estado, q.observacoes AS q_observacoes, q.ativo AS q_ativo, q.versao AS q_versao,
+                   cat.id AS cat_id, cat.nome AS cat_nome, cat.descricao AS cat_descricao, cat.capacidade_maxima AS cat_capacidade_maxima, cat.quantidade_camas AS cat_quantidade_camas, cat.preco_base AS cat_preco_base, cat.ativo AS cat_ativo
             FROM reserva r
             JOIN hospede h ON r.hospede_id = h.id
             JOIN quarto q ON r.quarto_id = q.id
