@@ -85,6 +85,7 @@
                         <div class="card-footer bg-transparent d-flex gap-2 flex-wrap">
                             <form th:if="${reserva.estado.name() == 'PENDENTE'}" method="post"
                                   th:action="@{'/reservas/' + ${reserva.id} + '/confirmar'}">
+                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                 <button type="submit" class="btn btn-outline-primary btn-sm">
                                     <i class="bi bi-check-lg me-1" aria-hidden="true"></i>Confirmar reserva
                                 </button>
@@ -95,6 +96,7 @@
                              </a>
                             <form th:if="${podeCheckIn}" method="post"
                                   th:action="@{'/reservas/' + ${reserva.id} + '/check-in'}">
+                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                 <button type="submit" class="btn btn-primary btn-sm">
                                     <i class="bi bi-key me-1" aria-hidden="true"></i>Fazer check-in
                                 </button>
@@ -106,6 +108,7 @@
                             <form th:if="${podeNoShow}" method="post"
                                   th:action="@{'/reservas/' + ${reserva.id} + '/no-show'}"
                                   th:attr="data-confirmar='Registrar no-show na reserva ' + ${reserva.codigo} + '? O período voltará a ficar disponível.'">
+                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                 <button type="submit" class="btn btn-outline-danger btn-sm">
                                     <i class="bi bi-person-x me-1" aria-hidden="true"></i>Registrar no-show
                                 </button>
@@ -113,6 +116,7 @@
                             <form th:if="${reserva.ativa}" method="post"
                                   th:action="@{'/reservas/' + ${reserva.id} + '/cancelar'}"
                                   th:attr="data-confirmar='Cancelar a reserva ' + ${reserva.codigo} + '? O período voltará a ficar disponível.'">
+                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                 <button type="submit" class="btn btn-outline-danger btn-sm">
                                     <i class="bi bi-x-lg me-1" aria-hidden="true"></i>Cancelar reserva
                                 </button>

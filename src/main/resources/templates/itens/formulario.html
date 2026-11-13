@@ -38,6 +38,7 @@
 
                             <form th:action="${form.id == null} ? @{/itens} : @{'/itens/' + ${form.id}}"
                                   th:object="${form}" method="post" novalidate>
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-8">
                                         <label for="nome" class="form-label campo-obrigatorio">Nome</label>

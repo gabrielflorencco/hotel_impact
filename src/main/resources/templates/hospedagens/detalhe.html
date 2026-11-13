@@ -68,6 +68,7 @@
                             <form th:if="${hospedagem.estado.name() == 'EM_ANDAMENTO'}" method="post"
                                   th:action="@{'/hospedagens/' + ${hospedagem.id} + '/check-out'}"
                                   class="mb-2">
+                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                 <div class="mb-2" th:if="${saldo.signum() > 0}">
                                     <div class="alert alert-warning py-2 small mb-2" role="alert">
                                         <i class="bi bi-exclamation-triangle me-1" aria-hidden="true"></i>
@@ -110,6 +111,7 @@
                             <form th:if="${podeLancar}" th:object="${consumoForm}" method="post" novalidate
                                   th:action="@{'/hospedagens/' + ${hospedagem.id} + '/consumos'}"
                                   class="row g-2 align-items-end mb-3">
+                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                 <div class="col-12 col-md-6">
                                     <label for="itemId" class="form-label campo-obrigatorio">Item</label>
                                     <select class="form-select form-select-sm" id="itemId" th:field="*{itemId}"
@@ -164,6 +166,7 @@
                                             <form th:if="${podeLancar and consumo.estado.name() == 'ATIVO'}" method="post"
                                                   th:action="@{'/hospedagens/' + ${hospedagem.id} + '/consumos/' + ${consumo.id} + '/cancelar'}"
                                                   th:attr="data-confirmar='Cancelar o lançamento de ' + ${consumo.quantidade} + 'x ' + ${consumo.itemNome} + '? O estoque será restituído quando aplicável.'">
+                                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Cancelar lançamento">
                                                     <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
                                                 </button>
@@ -199,6 +202,7 @@
                             <form th:if="${podePagar}" th:object="${pagamentoForm}" method="post" novalidate
                                   th:action="@{'/hospedagens/' + ${hospedagem.id} + '/pagamentos'}"
                                   class="row g-2 align-items-end mb-3">
+                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                 <div class="col-6 col-md-3">
                                     <label for="valor" class="form-label campo-obrigatorio">Valor</label>
                                     <div class="input-group input-group-sm">
@@ -255,6 +259,7 @@
                                             <form th:if="${pagamento.estado.name() == 'CONFIRMADO'}" method="post"
                                                   th:action="@{'/hospedagens/' + ${hospedagem.id} + '/pagamentos/' + ${pagamento.id} + '/estornar'}"
                                                   th:attr="data-confirmar='Estornar o pagamento de ' + ${pagamento.valor} + ' (' + ${pagamento.forma} + ')? O valor deixará de contar como recebido.'">
+                                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Estornar pagamento">
                                                     <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
                                                 </button>

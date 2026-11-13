@@ -73,6 +73,7 @@
                                              <i class="bi bi-pencil" aria-hidden="true"></i>
                                          </a>
                                          <form th:action="@{'/categorias/' + ${categoria.id} + '/alternar-ativo'}" method="post">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                              <button type="submit" class="btn btn-sm btn-outline-secondary"
                                                      th:title="${categoria.ativo} ? 'Desativar categoria (quartos existentes são preservados)' : 'Reativar categoria'"
                                                      th:aria-label="${categoria.ativo} ? 'Desativar categoria' : 'Reativar categoria'">
@@ -81,6 +82,7 @@
                                          </form>
                                          <form th:action="@{'/categorias/' + ${categoria.id} + '/excluir'}" method="post"
                                                th:attr="data-confirmar='Excluir a categoria ' + ${categoria.nome} + '? Esta ação não pode ser desfeita.'">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                              <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir">
                                                  <i class="bi bi-trash" aria-hidden="true"></i>
                                              </button>

@@ -1,47 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
-<head th:replace="~{layout/fragments :: head(${titulo})}"></head>
 <body data-area="admin">
 <a th:replace="~{layout/fragments :: pular-para-conteudo}"></a>
 <div class="app-wrapper">
-
     <aside th:replace="~{layout/fragments :: sidebar('quartos')}"></aside>
-
     <div class="app-main">
         <header th:replace="~{layout/fragments :: topbar}"></header>
-
         <main class="app-content" id="app-conteudo" tabindex="-1">
             <th:block th:fragment="conteudo">
             <div th:replace="~{layout/fragments :: mensagens}"></div>
-
             <div class="page-header">
                 <div>
                     <div class="page-context">Quartos & insumos</div>
-                    <h1 th:text="${titulo}">Novo quarto
-                        <th:block th:if="${estadoAtual != null}">
-                            <span class="align-middle ms-1" th:replace="~{layout/fragments :: badge-estado-quarto(${estadoAtual})}"></span>
-                        </th:block>
-                    </h1>
+                    <h1 th:text="${titulo}">Novo quarto</h1>
                 </div>
                 <div class="page-actions">
-                    <a class="btn btn-outline-secondary btn-sm" th:href="@{/quartos}">
-                        <i class="bi bi-arrow-left" aria-hidden="true"></i>Voltar
-                    </a>
+                    <a class="btn btn-outline-secondary btn-sm" th:href="@{/quartos}"><i class="bi bi-arrow-left" aria-hidden="true"></i>Voltar</a>
                 </div>
             </div>
-
             <div class="row justify-content-center">
                 <div class="col-lg-8 col-xl-7">
                     <div class="card shadow-sm">
                         <div class="card-body">
-                            <div class="alert alert-info py-2 small" th:if="${form.id != null}">
-                                <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
-                                O estado operacional do quarto muda apenas pelas operações do sistema
-                                (check-in, limpeza, manutenção e interdição).
-                            </div>
-
                             <form th:action="${form.id == null} ? @{/quartos} : @{'/quartos/' + ${form.id}}"
                                   th:object="${form}" method="post" novalidate>
+                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-4">
                                         <label for="numero" class="form-label campo-obrigatorio">Número</label>
@@ -68,7 +51,6 @@
                                         <div class="invalid-feedback" th:errors="*{andar}"></div>
                                     </div>
                                 </div>
-
                                 <div class="mb-3">
                                     <label for="capacidadeOperacional" class="form-label">Capacidade operacional</label>
                                     <div class="input-group">
@@ -81,20 +63,17 @@
                                     <div class="form-text">Quando informada, sobrepõe a capacidade da categoria para este quarto.</div>
                                     <div class="invalid-feedback" th:errors="*{capacidadeOperacional}"></div>
                                 </div>
-
                                 <div class="mb-3">
                                     <label for="observacoes" class="form-label">Observações</label>
                                     <textarea class="form-control" id="observacoes" th:field="*{observacoes}"
                                               rows="2" maxlength="500"></textarea>
                                     <div class="invalid-feedback" th:errors="*{observacoes}"></div>
                                 </div>
-
                                 <div class="form-check form-switch mb-4">
                                     <input class="form-check-input" type="checkbox" role="switch" id="ativo"
                                            th:field="*{ativo}">
                                     <label class="form-check-label" for="ativo">Quarto ativo (pode receber reservas)</label>
                                 </div>
-
                                 <div class="d-flex gap-2">
                                     <button type="submit" class="btn btn-primary">
                                         <i class="bi bi-check-lg me-1" aria-hidden="true"></i>Salvar
@@ -109,7 +88,6 @@
         </th:block>
         </main>
     </div>
-
 </div>
 <div th:replace="~{layout/fragments :: scripts}"></div>
 </body>

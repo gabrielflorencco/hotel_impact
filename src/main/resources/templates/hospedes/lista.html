@@ -94,6 +94,7 @@
                                          </a>
                                         <form th:action="@{'/hospedes/' + ${hospede.id} + '/excluir'}" method="post"
                                               th:attr="data-confirmar='Excluir o hóspede ' + ${hospede.nome} + '? Esta ação não pode ser desfeita.'">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                              <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir">
                                                  <i class="bi bi-trash" aria-hidden="true"></i>
                                              </button>

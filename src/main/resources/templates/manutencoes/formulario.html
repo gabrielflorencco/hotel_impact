@@ -37,6 +37,7 @@
                             </div>
 
                             <form th:action="@{/manutencoes}" th:object="${form}" method="post" novalidate>
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-6">
                                         <label for="quartoId" class="form-label campo-obrigatorio">Quarto</label>
