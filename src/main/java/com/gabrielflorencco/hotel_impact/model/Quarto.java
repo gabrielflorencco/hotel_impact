@@ -116,7 +116,7 @@ public class Quarto {
     }
 
     public void concluirLimpeza() {
-        if (estado != EstadoQuarto.LIMPEZA) {
+        if (estado != EstadoQuarto.LIMPEZA && estado != EstadoQuarto.OCUPADO) {
             throw new NegocioException("Somente quartos aguardando limpeza podem ser liberados.");
         }
         estado = EstadoQuarto.DISPONIVEL;

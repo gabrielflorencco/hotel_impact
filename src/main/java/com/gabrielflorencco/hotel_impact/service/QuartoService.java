@@ -155,6 +155,8 @@ public class QuartoService {
                                 "Não há tarefa de limpeza aberta para o quarto " + quarto.getNumero() + "."));
         tarefa.iniciar();
         tarefasLimpeza.save(tarefa);
+        quarto.setEstado(EstadoQuarto.OCUPADO);
+        quartos.save(quarto);
         auditoria.registrar(com.gabrielflorencco.hotel_impact.enums.OperacaoAuditoria.LIMPEZA_INICIADA,
                 "TarefaLimpeza", tarefa.getId(), "Quarto " + quarto.getNumero());
     }
