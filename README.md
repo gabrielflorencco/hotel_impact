@@ -23,7 +23,7 @@ Sistema de gestão hoteleira (PMS) desenvolvido como trabalho acadêmico.
 - Java 21 · Spring Boot 4.1.2 · Maven
 - Spring MVC + Thymeleaf (renderização no servidor)
 - Spring Data JDBC (SQL explícito via JdbcTemplate)
-- PostgreSQL (inicialização nativa via `schema-DB_CREDENTIAL_PLACEHOLDER.sql`)
+- PostgreSQL (inicialização nativa via `schema-postgres.sql`)
 - Spring Security (form login, CSRF)
 - Bootstrap 5 (vendorizado)
 - htmx 2.0.4 (navegação parcial SPA na área autenticada)
@@ -37,22 +37,24 @@ Sistema de gestão hoteleira (PMS) desenvolvido como trabalho acadêmico.
 ## Banco de dados
 
 ```bash
-psql -U DB_CREDENTIAL_PLACEHOLDER -c "CREATE DATABASE hotel_impact;"
+psql -U $SPRING_DATASOURCE_USERNAME -c "CREATE DATABASE hotel_impact;"
 ```
 
-O script `schema-DB_CREDENTIAL_PLACEHOLDER.sql` é executado automaticamente na inicialização (configurado em `application.yml` com `spring.sql.init.mode=always`). Contém `CREATE TABLE IF NOT EXISTS`, constraints, índices e a extensão `btree_gist` para a constraint de exclusão de reservas sobrepostas. Idempotente: pode ser executado repetidamente.
+O script `schema-postgres.sql` é executado automaticamente na inicialização (configurado em `application.yml` com `spring.sql.init.mode=always`). Contém `CREATE TABLE IF NOT EXISTS`, constraints, índices e a extensão `btree_gist` para a constraint de exclusão de reservas sobrepostas. Idempotente: pode ser executado repetidamente.
 
 ## Variáveis de ambiente
 
-| Variável | Padrão local |
-|---|---|
-| `SPRING_DATASOURCE_URL` | `DB_URL_PLACEHOLDER` |
-| `SPRING_DATASOURCE_USERNAME` | `DB_CREDENTIAL_PLACEHOLDER` |
-| `SPRING_DATASOURCE_PASSWORD` | `DB_CREDENTIAL_PLACEHOLDER` |
-| `PORT` | `8080` |
-| `HOTELIMPACT_USER` | `RECEPCIONISTA_USER_PLACEHOLDER` |
-| `HOTELIMPACT_PASSWORD` | `RECEPCIONISTA_PASSWORD_PLACEHOLDER` |
-| `APP_SEED_DEMO` | `false` |
+Todas as variáveis são obrigatórias, exceto quando indicado:
+
+| Variável | Descrição | Obrigatório |
+|---|---|---|
+| `SPRING_DATASOURCE_URL` | URL de conexão com o banco PostgreSQL | Sim |
+| `SPRING_DATASOURCE_USERNAME` | Usuário do banco de dados | Sim |
+| `SPRING_DATASOURCE_PASSWORD` | Senha do banco de dados | Sim |
+| `PORT` | Porta da aplicação | Não |
+| `HOTELIMPACT_USER` | Usuário de autenticação da recepção | Sim |
+| `HOTELIMPACT_PASSWORD` | Senha de autenticação da recepção | Sim |
+| `APP_SEED_DEMO` | Carregar massa de dados de demonstração | Não |
 
 ## Execução
 
@@ -65,4 +67,4 @@ Acessos:
 - `http://localhost:8080/login` — autenticação da recepção
 - `http://localhost:8080/painel` — área administrativa (após login)
 
-Credenciais padrão: `RECEPCIONISTA_USER_PLACEHOLDER` / `RECEPCIONISTA_PASSWORD_PLACEHOLDER`.
+Defina todas as variáveis de ambiente obrigatórias antes de executar. Não há credenciais padrão.

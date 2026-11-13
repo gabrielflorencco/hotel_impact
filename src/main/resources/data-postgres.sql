@@ -1,4 +1,4 @@
--- data-DB_CREDENTIAL_PLACEHOLDER.sql — Massa de dados de demonstração para HotelImpact (perfil dev)
+-- data-postgres.sql — Massa de dados de demonstração para HotelImpact (perfil dev)
 --
 -- Executado pelo mecanismo nativo de inicialização SQL do Spring Boot
 -- (spring.sql.init.mode=always, perfil dev). Todas as instruções são idempotentes:
@@ -551,4 +551,4 @@ VALUES
     ('CHECK_IN', 'RECEPCIONISTA_USER_PLACEHOLDER', 'Hospedagem', (SELECT id FROM hospedagem WHERE reserva_id = (SELECT id FROM reserva WHERE codigo = 'RES-2025-000008')), NOW() - INTERVAL '1 day', 'Reserva RES-2025-000008')
 ON CONFLICT DO NOTHING;
 
--- Fim do script data-DB_CREDENTIAL_PLACEHOLDER.sql
+-- Fim do script data-postgres.sql

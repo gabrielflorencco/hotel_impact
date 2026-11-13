@@ -6,24 +6,24 @@ spring:
     port: ${PORT:8080}
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:DB_URL_PLACEHOLDER}
-    username: ${SPRING_DATASOURCE_USERNAME:DB_CREDENTIAL_PLACEHOLDER}
-    password: ${SPRING_DATASOURCE_PASSWORD:DB_CREDENTIAL_PLACEHOLDER}
-    driver-class-name: org.DB_CREDENTIAL_PLACEHOLDERql.Driver
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
 
   sql:
     init:
       mode: always
-      schema-locations: classpath:schema-DB_CREDENTIAL_PLACEHOLDER.sql
-      data-locations: classpath:data-DB_CREDENTIAL_PLACEHOLDER.sql
+      schema-locations: classpath:schema-postgres.sql
+      data-locations: classpath:data-postgres.sql
 
   thymeleaf:
     cache: false
 
   security:
     user:
-      name: ${HOTELIMPACT_USER:RECEPCIONISTA_USER_PLACEHOLDER}
-      password: ${HOTELIMPACT_PASSWORD:RECEPCIONISTA_PASSWORD_PLACEHOLDER}
+      name: ${HOTELIMPACT_USER}
+      password: ${HOTELIMPACT_PASSWORD}
       roles: RECEPCAO
 
 app:

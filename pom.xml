@@ -39,8 +39,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.DB_CREDENTIAL_PLACEHOLDERql</groupId>
-			<artifactId>DB_CREDENTIAL_PLACEHOLDERql</artifactId>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 

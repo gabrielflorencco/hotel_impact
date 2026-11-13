@@ -26,7 +26,7 @@
                 <p>
                     O projeto é construído em Java 21 com Spring Boot, renderização no
                     servidor via Thymeleaf e persistência em PostgreSQL com Spring Data JDBC.
-                    O esquema é inicializado pelo mecanismo nativo do Spring Boot (schema-DB_CREDENTIAL_PLACEHOLDER.sql).
+                    O esquema é inicializado pelo mecanismo nativo do Spring Boot (schema-postgres.sql).
                     As regras que dependem de concorrência — duas reservas sobrepostas no mesmo quarto,
                     duas hospedagens simultâneas, estoque negativo — são reforçadas por constraints
                     específicas do PostgreSQL (exclusão por intervalo, índice único parcial e CHECK),
