@@ -95,6 +95,7 @@ public class ManutencaoService {
     public void iniciar(Long id) {
         OrdemManutencao ordem = buscarPorId(id);
         ordem.iniciarExecucao();
+        ordens.save(ordem);
         auditoria.registrar(com.gabrielflorencco.hotel_impact.enums.OperacaoAuditoria.MANUTENCAO_INICIADA,
                 "OrdemManutencao", id, "Quarto " + ordem.getQuarto().getNumero());
 
@@ -109,6 +110,7 @@ public class ManutencaoService {
     public void concluir(Long id) {
         OrdemManutencao ordem = buscarPorId(id);
         ordem.concluirOrdem();
+        ordens.save(ordem);
         auditoria.registrar(com.gabrielflorencco.hotel_impact.enums.OperacaoAuditoria.MANUTENCAO_CONCLUIDA,
                 "OrdemManutencao", id, "Quarto " + ordem.getQuarto().getNumero());
         liberarQuartoSeCausadoPelaOrdem(ordem);
@@ -118,6 +120,7 @@ public class ManutencaoService {
     public void cancelar(Long id) {
         OrdemManutencao ordem = buscarPorId(id);
         ordem.cancelarOrdem();
+        ordens.save(ordem);
         auditoria.registrar(com.gabrielflorencco.hotel_impact.enums.OperacaoAuditoria.MANUTENCAO_CANCELADA,
                 "OrdemManutencao", id, "Quarto " + ordem.getQuarto().getNumero());
         liberarQuartoSeCausadoPelaOrdem(ordem);
