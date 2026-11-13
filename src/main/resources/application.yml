@@ -27,7 +27,7 @@ spring:
       roles: RECEPCAO
 
 app:
-  seed-demo: ${APP_SEED_DEMO:false}
+  seed-demo: ${APP_SEED_DEMO:true}
 
 logging:
   level:
