@@ -105,25 +105,29 @@
                                         <form th:if="${quarto.estado.name() == 'DISPONIVEL'}"
                                               th:action="@{'/quartos/' + ${quarto.id} + '/interditar'}" method="post"
                                               th:attr="data-confirmar='Interditar o quarto ' + ${quarto.numero} + '? Ele não receberá hospedagens até ser liberado.'">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                              <button type="submit" class="btn btn-sm btn-outline-warning" title="Interditar">
                                                  <i class="bi bi-cone-striped" aria-hidden="true"></i>
                                              </button>
                                          </form>
                                         <form th:if="${quarto.estado.name() == 'INTERDITADO'}"
                                               th:action="@{'/quartos/' + ${quarto.id} + '/liberar'}" method="post">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                              <button type="submit" class="btn btn-sm btn-outline-success" title="Liberar">
                                                  <i class="bi bi-unlock" aria-hidden="true"></i>
                                              </button>
                                          </form>
                                         <form th:if="${quarto.estado.name() == 'LIMPEZA'}"
                                               th:action="@{'/quartos/' + ${quarto.id} + '/iniciar-limpeza'}" method="post">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                              <button type="submit" class="btn btn-sm btn-outline-secondary"
                                                      title="Iniciar limpeza (tarefa em andamento)">
                                                  <i class="bi bi-brush" aria-hidden="true"></i>
                                              </button>
                                          </form>
-                                        <form th:if="${quarto.estado.name() == 'LIMPEZA'}"
+                                        <form th:if="${quarto.estado.name() == 'OCUPADO'}"
                                               th:action="@{'/quartos/' + ${quarto.id} + '/concluir-limpeza'}" method="post">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                              <button type="submit" class="btn btn-sm btn-outline-success"
                                                      title="Concluir limpeza (quarto volta a ficar disponível)">
                                                  <i class="bi bi-stars" aria-hidden="true"></i>
@@ -131,6 +135,7 @@
                                          </form>
                                         <form th:action="@{'/quartos/' + ${quarto.id} + '/alternar-ativo'}" method="post"
                                               th:attr="data-confirmar=${quarto.ativo} ? 'Desativar o quarto ' + ${quarto.numero} + '?' : null">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                              <button th:if="${quarto.ativo}" type="submit"
                                                      class="btn btn-sm btn-outline-secondary" title="Desativar">
                                                  <i class="bi bi-pause-circle" aria-hidden="true"></i>
@@ -142,6 +147,7 @@
                                          </form>
                                         <form th:action="@{'/quartos/' + ${quarto.id} + '/excluir'}" method="post"
                                               th:attr="data-confirmar='Excluir o quarto ' + ${quarto.numero} + '? Esta ação não pode ser desfeita.'">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                              <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir">
                                                  <i class="bi bi-trash" aria-hidden="true"></i>
                                              </button>
