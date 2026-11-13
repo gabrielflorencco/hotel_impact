@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<body data-area="admin">
+<a th:replace="~{layout/fragments :: pular-para-conteudo}"></a>
+<div class="app-wrapper">
+    <aside th:replace="~{layout/fragments :: sidebar('reservas')}"></aside>
+    <div class="app-main">
+        <header th:replace="~{layout/fragments :: topbar}"></header>
+        <main class="app-content" id="app-conteudo" tabindex="-1">
+            <th:block th:fragment="conteudo">
+            <div th:replace="~{layout/fragments :: mensagens}"></div>
+            <div class="page-header">
+                <div>
+                    <div class="page-context">Operação</div>
+                    <h1 th:text="${titulo}">Nova reserva</h1>
+                </div>
+                <div class="page-actions">
+                    <a class="btn btn-outline-secondary btn-sm" th:href="@{/quartos}"><i class="bi bi-arrow-left" aria-hidden="true"></i>Voltar</a>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-xl-7">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <form th:action="${form.id == null} ? @{/reservas} : @{'/reservas/' + ${form.id}}"
+                                  th:object="${form}" method="post" novalidate>
+                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-4">
+                                        <label for="hospedeId" class="form-label campo-obrigatorio">Hóspede</label>
+                                        <select class="form-select" id="hospedeId" th:field="*{hospedeId}"
+                                                th:classappend="${#fields.hasErrors('hospedeId')} ? 'is-invalid'">
+                                            <option value="">Selecione…</option>
+                                            <option th:each="h : ${hospedes}" th:value="${h.id}"
+                                                    th:text="${h.nome}">Hóspede</option>
+                                        </select>
+                                        <div class="invalid-feedback" th:errors="*{hospedeId}"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="quartoId" class="form-label campo-obrigatorio">Quarto</label>
+                                        <select class="form-select" id="quartoId" th:field="*{quartoId}"
+                                                th:classappend="${#fields.hasErrors('quartoId')} ? 'is-invalid'">
+                                            <option value="">Selecione…</option>
+                                            <option th:each="q : ${quartos}" th:value="${q.id}"
+                                                    th:text="${q.numero} + ' - ' + ${q.categoria.nome}">Quarto 101</option>
+                                        </select>
+                                        <div class="invalid-feedback" th:errors="*{quartoId}"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="dataCheckIn" class="form-label campo-obrigatorio">Check-in</label>
+                                        <input type="date" class="form-control" id="dataCheckIn" th:field="*{dataCheckIn}"
+                                               th:classappend="${#fields.hasErrors('dataCheckIn')} ? 'is-invalid'">
+                                        <div class="invalid-feedback" th:errors="*{dataCheckIn}"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="dataCheckOut" class="form-label campo-obrigatorio">Check-out</label>
+                                        <input type="date" class="form-control" id="dataCheckOut" th:field="*{dataCheckOut}"
+                                               th:classappend="${#fields.hasErrors('dataCheckOut')} ? 'is-invalid'">
+                                        <div class="invalid-feedback" th:errors="*{dataCheckOut}"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="quantidadeHospedes" class="form-label campo-obrigatorio">Quantidade de hóspedes</label>
+                                        <input type="number" min="1" max="20" class="form-control" id="quantidadeHospedes"
+                                               th:field="*{quantidadeHospedes}"
+                                               th:classappend="${#fields.hasErrors('quantidadeHospedes')} ? 'is-invalid'">
+                                        <div class="invalid-feedback" th:errors="*{quantidadeHospedes}"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="valorDiaria" class="form-label campo-obrigatorio">Diária</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">R$</span>
+                                            <input type="number" min="0.01" step="0.01" class="form-control" id="valorDiaria"
+                                                   th:field="*{valorDiaria}"
+                                                   th:classappend="${#fields.hasErrors('valorDiaria')} ? 'is-invalid'">
+                                        </div>
+                                        <div class="invalid-feedback" th:errors="*{valorDiaria}"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="desconto" class="form-label">Desconto</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">R$</span>
+                                            <input type="number" min="0" step="0.01" class="form-control" id="desconto"
+                                                   th:field="*{desconto}"
+                                                   th:classappend="${#fields.hasErrors('desconto')} ? 'is-invalid'">
+                                        </div>
+                                        <div class="invalid-feedback" th:errors="*{desconto}"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="motivoExcecao" class="form-label">Justificativa de exceção</label>
+                                        <textarea class="form-control" id="motivoExcecao" th:field="*{motivoExcecao}"
+                                                  rows="2" maxlength="300"></textarea>
+                                        <div class="invalid-feedback" th:errors="*{motivoExcecao}"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="observacoes" class="form-label">Observações</label>
+                                        <textarea class="form-control" id="observacoes" th:field="*{observacoes}"
+                                                  rows="2" maxlength="500"></textarea>
+                                        <div class="invalid-feedback" th:errors="*{observacoes}"></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-check-lg me-1" aria-hidden="true"></i>Salvar
+                                    </button>
+                                    <a class="btn btn-outline-secondary" th:href="@{/reservas}">Cancelar</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+        </main>
+    </div>
+</div>
+<div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>
