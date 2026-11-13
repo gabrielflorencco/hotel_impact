@@ -95,6 +95,7 @@ public class HospedagemService {
                 "Hospedagem", hospedagemId, "Reserva " + hospedagem.getReserva().getCodigo());
 
         hospedagem.encerrar(saldo, motivoExcecao);
+        hospedagens.save(hospedagem);
 
         Reserva reserva = hospedagem.getReserva();
         if (reserva.isAtiva()) {
@@ -109,6 +110,7 @@ public class HospedagemService {
         com.gabrielflorencco.hotel_impact.model.TarefaLimpeza tarefa =
                 new com.gabrielflorencco.hotel_impact.model.TarefaLimpeza();
         tarefa.setQuarto(quarto);
+        tarefa.setCriadaEm(LocalDateTime.now());
         tarefasLimpeza.save(tarefa);
     }
 
