@@ -15,6 +15,7 @@ spring:
     init:
       mode: always
       schema-locations: classpath:schema-DB_CREDENTIAL_PLACEHOLDER.sql
+      data-locations: classpath:data-DB_CREDENTIAL_PLACEHOLDER.sql
 
   thymeleaf:
     cache: false

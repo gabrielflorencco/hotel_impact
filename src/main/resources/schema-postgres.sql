@@ -120,11 +120,14 @@ CREATE TABLE IF NOT EXISTS consumo (
     data_hora timestamp without time zone NOT NULL,
     estado character varying(10) NOT NULL DEFAULT 'ATIVO',
     observacoes character varying(300),
+    versao bigint NOT NULL DEFAULT 0,
     CONSTRAINT fk_consumo_hospedagem FOREIGN KEY (hospedagem_id) REFERENCES hospedagem(id),
     CONSTRAINT fk_consumo_item FOREIGN KEY (item_id) REFERENCES item_catalogo(id),
     CONSTRAINT consumo_estado_check CHECK (estado IN ('ATIVO','CANCELADO')),
-    CONSTRAINT consumo_quantidade_check CHECK (quantidade >= 1)
+    CONSTRAINT consumo_quantidade_check CHECK (quantidade >= 1),
+    CONSTRAINT consumo_unique UNIQUE (hospedagem_id, item_id, data_hora)
 );
+ALTER TABLE IF EXISTS consumo ADD COLUMN IF NOT EXISTS versao bigint NOT NULL DEFAULT 0;
 
 CREATE INDEX IF NOT EXISTS idx_consumo_hospedagem ON consumo (hospedagem_id);
 
@@ -139,7 +142,8 @@ CREATE TABLE IF NOT EXISTS pagamento (
     versao bigint NOT NULL DEFAULT 0,
     CONSTRAINT fk_pagamento_hospedagem FOREIGN KEY (hospedagem_id) REFERENCES hospedagem(id),
     CONSTRAINT pagamento_estado_check CHECK (estado IN ('CONFIRMADO','ESTORNADO')),
-    CONSTRAINT pagamento_forma_check CHECK (forma IN ('DINHEIRO','PIX','CARTAO_CREDITO','CARTAO_DEBITO','OUTRO'))
+    CONSTRAINT pagamento_forma_check CHECK (forma IN ('DINHEIRO','PIX','CARTAO_CREDITO','CARTAO_DEBITO','OUTRO')),
+    CONSTRAINT pagamento_unique UNIQUE (hospedagem_id, forma, data_hora)
 );
 
 CREATE INDEX IF NOT EXISTS idx_pagamento_hospedagem ON pagamento (hospedagem_id);
@@ -159,7 +163,8 @@ CREATE TABLE IF NOT EXISTS ordem_manutencao (
     versao bigint NOT NULL DEFAULT 0,
     CONSTRAINT fk_ordem_manutencao_quarto FOREIGN KEY (quarto_id) REFERENCES quarto(id),
     CONSTRAINT ordem_manutencao_estado_check CHECK (estado IN ('ABERTA','EM_ANDAMENTO','CONCLUIDA','CANCELADA')),
-    CONSTRAINT ordem_manutencao_prioridade_check CHECK (prioridade IN ('BAIXA','MEDIA','ALTA','CRITICA'))
+    CONSTRAINT ordem_manutencao_prioridade_check CHECK (prioridade IN ('BAIXA','MEDIA','ALTA','CRITICA')),
+    CONSTRAINT ordem_manutencao_unique UNIQUE (quarto_id, titulo, aberta_em)
 );
 
 CREATE INDEX IF NOT EXISTS idx_ordem_manutencao_quarto ON ordem_manutencao (quarto_id);
@@ -174,7 +179,8 @@ CREATE TABLE IF NOT EXISTS tarefa_limpeza (
     observacoes character varying(300),
     versao bigint NOT NULL DEFAULT 0,
     CONSTRAINT fk_tarefa_limpeza_quarto FOREIGN KEY (quarto_id) REFERENCES quarto(id),
-    CONSTRAINT tarefa_limpeza_estado_check CHECK (estado IN ('PENDENTE','EM_EXECUCAO','CONCLUIDA'))
+    CONSTRAINT tarefa_limpeza_estado_check CHECK (estado IN ('PENDENTE','EM_EXECUCAO','CONCLUIDA')),
+    CONSTRAINT tarefa_limpeza_unique UNIQUE (quarto_id, criada_em)
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS uk_tarefa_limpeza_aberta ON tarefa_limpeza (quarto_id) WHERE (estado IN ('PENDENTE','EM_EXECUCAO'));
@@ -197,7 +203,8 @@ CREATE TABLE IF NOT EXISTS registro_auditoria (
         'PAGAMENTO_REGISTRADO','PAGAMENTO_ESTORNADO',
         'LIMPEZA_INICIADA','LIMPEZA_CONCLUIDA',
         'MANUTENCAO_ABERTA','MANUTENCAO_INICIADA','MANUTENCAO_CONCLUIDA','MANUTENCAO_CANCELADA'
-    ))
+    )),
+    CONSTRAINT registro_auditoria_unique UNIQUE (operacao, usuario, entidade_tipo, entidade_id, data_hora)
 );
 
 CREATE INDEX IF NOT EXISTS idx_auditoria_data ON registro_auditoria (data_hora);
